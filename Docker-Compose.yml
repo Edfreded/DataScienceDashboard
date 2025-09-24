@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: posgresql
+      POSTGRES_PASSWORD: Admin123!
+      POSTGRES_DB: Dashboard
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./datasets:/app/datasets
+
+  dashboard:
+    build: .
+    ports:
+      - "8050:8050"
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  postgres_data:
