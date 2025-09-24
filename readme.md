@@ -1,34 +1,111 @@
-setup:
-    requirements:
-        make sure to have docker installed, this manages the environment for the dashboard app and the database. It keeps everything belonging to this app isolated and clean
-        dockerhub is recommended:
-            https://hub.docker.com/welcome
-    
-    running the app            
-        for the dashboard, run "docker compose up -Dashboard" 
-        for the db, run "docker compose up -Dashboard"
+# Statistics Dashboard
 
+A statistics dashboard created with Python and Dash, featuring a clean ETV (Extract, Transform, View) architecture.
 
+## Architecture
 
-workflow
-Every flow is supervised by an orchestator, this is where to start when creation a new dashboard. Simply create a new python file in the Orchestrator directory and define the Extract, Transform and Load scripts.
+### Containers
 
-    The Extract is the retrieval of the dataset, place this in a single py file or split it up with a clear naming scheme that indicates the parent flow.
-    Currently data is loaded from files in the Datasets directory you have localy. 
+**Container 1: PostgreSQL**
+- Holds your raw + cleaned dataset
+- Exposes port 5432
 
-    The Transform is mainly for altering the dataset. this can be any cleaning and modificating as you wish. it can also be done in the extract file, whatever is most convenient. Inside the transform step is most typical
+**Container 2: Python (Dash app)**
+- Installed: See Requirements.txt (plotly, dash, dash-bootstrap-components, pandas, sqlalchemy/psycopg2)
+- Read from Datasets directory for datasets
+- Connects to PostgreSQL for data (Planned)
+- Exposes port 8050 (frontend)
 
-    The Load is the same as View in MVC here, this is the dashboard. the dashboard may or may not be a template that you pass graphs and data, or it may graph data itself. again, what you prefer.
-    Styling, interaction and navigation are done here aswell. 
+### Code Structure (ETV Pattern)
 
-These 3 steps are called and linked together in the orchestrator to keep things clean. make sure to use parent-child naming conventions for easy reading and avoiding confusion
+**Extract**
+- Module: `Extract` directory
+- Handles DB connections
+- Queries raw/cleaned tables from PostgreSQL
+- Returns DataFrames
 
-lastly, make sure to call the orchestrator in App.py main() method. This is the entry point for the app
+**Transform**
+- Module: `Transform` directory
+- Cleans, aggregates, reshapes data
+- Produces chart-ready DataFrames (e.g., group by category, calculate KPIs, etc)
 
+**View (Dash app)**
+- Module: `Load` directory
+- Imports transformed DataFrames
+- Defines Dash layout (multipage setup)
+- Uses Bootstrap components for styling
+- Handles callbacks for interactivity (e.g., click → drill-down)
 
+**Styling**
+- Folder: `assets/` (optional for extra CSS)
+- Bootstrap theme via dash-bootstrap-components
+- Minimal custom CSS overrides if needed
 
-Note:
+## Setup
 
-any extra dependencies can be installed into the docker container directly but will not be shared across the rest of the group. add dependencies/ imports to the Requrements.txt file so they are picked up when a container is created by anyone
+### Requirements
+- Docker installed (manages the environment for dashboard app and database)
+- Keeps everything isolated and clean
+- Docker Hub recommended: https://hub.docker.com/welcome
 
-Hot reload is active for code, meaning you dont have to restart the environment with code changes, it should be picked up when saving a file. The datasets are not hot reloaded for obvious reasons
+### Running the App
+```bash
+# For the dashboard
+docker compose up dashboard
+
+# For the database
+docker compose up db
+
+# For both
+docker compose up
+```
+
+## Workflow
+
+Every flow is supervised by an **orchestrator** - this is where to start when creating a new dashboard.
+
+1. Create a new Python file in the `Orchestrator/` directory
+2. Define the Extract, Transform and Load scripts in their respective directories
+
+### Extract
+- Retrieval of the dataset
+- Place in a single py file or split with clear naming scheme
+- Currently data is loaded from files in the `Datasets/` directory locally
+
+### Transform
+- Altering the dataset - cleaning and modifications
+- Can be done in the extract file if more convenient
+- Transform step is most typical location
+
+### Load
+- Same as View in MVC - this is the dashboard
+- May be a template that receives graphs and data, or it may graph data itself
+- Styling, interaction and navigation are handled here
+
+### Integration
+- These 3 steps are called and linked together in the orchestrator
+- Use parent-child naming conventions for easy reading
+- Call the orchestrator in `App.py` main() method (entry point)
+
+## Data Flow (Not yet implemented)
+1. Data loaded into Postgres (raw → cleaned)
+2. Extract queries tables
+3. Transform prepares DataFrames
+4. View presents multipage interactive dashboards with drill-down
+
+## Development Notes
+
+### Dependencies
+- Extra dependencies can be installed directly into the docker container, but will not be shared or saved
+- Add dependencies/imports to `Requirements.txt` so they're saved and picked up when containers are created by anyone
+
+### Hot Reload
+- **Code**: Hot reload is active - no need to restart environment with code changes
+- **Datasets**: Not hot reloaded (for obvious reasons)
+- Changes are picked up when saving files
+
+## Benefits
+- Clear separation of concerns (ETV)
+- Scales well if datasets grow (Postgres handles heavy lifting)
+- Professional frontend with Bootstrap
+- Easy to dockerize, extend, or deploy
