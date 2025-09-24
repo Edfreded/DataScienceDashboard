@@ -1,6 +1,5 @@
 import dash
 from dash import dcc, html, Input, Output
-import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -10,60 +9,54 @@ def create_dashboard_layout(summary_stats, df):
     """
     if not summary_stats or df.empty:
         return html.Div([
-            html.H1("Car Sales Dashboard", className="text-center mb-4"),
-            html.P("No data available", className="text-center")
-        ])
+            html.H1("Car Sales Dashboard", className="dashboard-title"),
+            html.P("No data available", style={'text-align': 'center'})
+        ], className="dashboard-container")
     
     # Create charts
     fuel_chart = create_fuel_type_chart(summary_stats)
     location_chart = create_location_chart(summary_stats)
     year_chart = create_year_trend_chart(summary_stats)
     
-    layout = dbc.Container([
-        dbc.Row([
-            dbc.Col([
-                html.H1("Car Sales Dashboard", className="text-center mb-4"),
-                html.Hr()
-            ])
-        ]),
+    layout = html.Div([
+        # Header
+        html.Div([
+            html.H1("Car Sales Dashboard", className="dashboard-title"),
+            html.Hr(className="dashboard-divider")
+        ], className="dashboard-header"),
         
-        # Summary cards
-        dbc.Row([
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H4(f"{summary_stats['total_cars']:,}", className="card-title"),
-                        html.P("Total Cars", className="card-text")
-                    ])
-                ])
-            ], width=3),
-            dbc.Col([
-                dbc.Card([
-                    dbc.CardBody([
-                        html.H4(f"₹{summary_stats['avg_price']:.1f}L", className="card-title"),
-                        html.P("Average Price", className="card-text")
-                    ])
-                ])
-            ], width=3)
-        ], className="mb-4"), 
-       
-        # Charts
-        dbc.Row([
-            dbc.Col([
-                dcc.Graph(figure=fuel_chart)
-            ], width=6),
-            dbc.Col([
-                dcc.Graph(figure=location_chart)
-            ], width=6)
-        ], className="mb-4"),
+        # Main content - 2 column layout
+        html.Div([
+            # Left sidebar with stats
+            html.Div([
+                html.Div([
+                    html.Div([
+                        html.Div(f"{summary_stats['total_cars']:,}", className="stat-value"),
+                        html.Div("Total Cars", className="stat-label")
+                    ], className="stat-card"),
+                    html.Div([
+                        html.Div(f"₹{summary_stats['avg_price']:.1f}L", className="stat-value"),
+                        html.Div("Average Price", className="stat-label")
+                    ], className="stat-card")
+                ], className="stats-container")
+            ], className="left-sidebar"),
+            
+            # Right area with charts in 2x2 grid
+            html.Div([
+                html.Div([
+                    dcc.Graph(figure=fuel_chart, style={'height': '100%'})
+                ], className="chart-container"),
+                html.Div([
+                    dcc.Graph(figure=location_chart, style={'height': '100%'})
+                ], className="chart-container"),
+                html.Div([
+                    dcc.Graph(figure=year_chart, style={'height': '100%'})
+                ], className="chart-container full-width")
+            ], className="charts-area")
+            
+        ], className="main-content")
         
-        dbc.Row([
-            dbc.Col([
-                dcc.Graph(figure=year_chart)
-            ], width=12)
-        ])
-        
-    ], fluid=True)
+    ], className="dashboard-container")
     
     return layout
 

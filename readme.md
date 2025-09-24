@@ -87,6 +87,8 @@ Every flow is supervised by an **orchestrator** - this is where to start when cr
 - Use parent-child naming conventions for easy reading
 - Call the orchestrator in `App.py` main() method (entry point)
 
+See test files as an example for structure or where to start 
+
 ## Data Flow (Not yet implemented)
 1. Data loaded into Postgres (raw → cleaned)
 2. Extract queries tables
