@@ -1,8 +1,9 @@
+import dash
+import plotly.io as pio
+from Config import ASSETS_PATH
 from Extract.Extract_Test import extract_car_data
 from Transform.Transform_Test import clean_and_transform_data, create_summary_stats
 from Load.Load_Test_Dashboard1 import create_dashboard_layout
-import dash
-import plotly.io as pio
 
 def orchestrator_test_1():
     """
@@ -60,144 +61,7 @@ def orchestrator_test_1():
     pio.templates["bootstrap_dark"] = custom_template
     pio.templates.default = "bootstrap_dark"
     
-    app = dash.Dash(__name__)
-    
-    # Embed CSS directly to avoid file serving issues
-    app.index_string = '''
-    <!DOCTYPE html>
-    <html>
-        <head>
-            {%metas%}
-            <title>{%title%}</title>
-            {%favicon%}
-            {%css%}
-            <style>
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                html, body {
-                    background-color: #343a40;
-                    color: #f8f9fa;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    line-height: 1.5;
-                    height: 100vh;
-                    overflow: hidden;
-                }
-                .dashboard-container {
-                    background-color: #343a40;
-                    height: 100vh;
-                    padding: 1rem;
-                    display: grid;
-                    grid-template-rows: auto 1fr;
-                    gap: 1rem;
-                }
-                .dashboard-header {
-                    text-align: center;
-                }
-                .dashboard-title {
-                    font-size: 1.8rem;
-                    font-weight: 300;
-                    color: #f8f9fa;
-                    margin-bottom: 0.5rem;
-                }
-                .dashboard-divider {
-                    height: 2px;
-                    background: linear-gradient(90deg, transparent, #007bff, transparent);
-                    border: none;
-                    margin: 0.5rem auto;
-                    width: 150px;
-                }
-                .main-content {
-                    display: grid;
-                    grid-template-columns: 300px 1fr;
-                    gap: 1rem;
-                    height: 100%;
-                    overflow: hidden;
-                }
-                .left-sidebar {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-                .stats-container {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                }
-                .stat-card {
-                    background-color: #495057;
-                    border-radius: 8px;
-                    padding: 1rem;
-                    text-align: center;
-                    transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    border: 1px solid #6c757d;
-                }
-                .stat-card:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.15);
-                }
-                .stat-value {
-                    font-size: 1.5rem;
-                    font-weight: 600;
-                    color: #007bff;
-                    margin-bottom: 0.3rem;
-                }
-                .stat-label {
-                    font-size: 0.8rem;
-                    color: #adb5bd;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-                .charts-area {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    grid-template-rows: 1fr 1fr;
-                    gap: 1rem;
-                    height: 100%;
-                }
-                .chart-container {
-                    background-color: #495057;
-                    border-radius: 8px;
-                    padding: 0.5rem;
-                    border: 1px solid #6c757d;
-                    overflow: hidden;
-                }
-                .chart-container.full-width {
-                    grid-column: 1 / -1;
-                }
-                .js-plotly-plot, .plotly-graph-div {
-                    background-color: transparent !important;
-                    height: 100% !important;
-                }
-                @media (max-width: 768px) {
-                    .main-content {
-                        grid-template-columns: 1fr;
-                        grid-template-rows: auto 1fr;
-                    }
-                    .stats-container {
-                        flex-direction: row;
-                        gap: 0.5rem;
-                    }
-                    .charts-area {
-                        grid-template-columns: 1fr;
-                        grid-template-rows: repeat(3, 300px);
-                        height: auto;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            {%app_entry%}
-            <footer>
-                {%config%}
-                {%scripts%}
-                {%renderer%}
-            </footer>
-        </body>
-    </html>
-    '''
+    app = dash.Dash(__name__, assets_folder=ASSETS_PATH)
     
     # Set the layout
     app.layout = create_dashboard_layout(summary_stats, cleaned_data)
