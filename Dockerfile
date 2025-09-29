@@ -7,4 +7,4 @@ RUN pip install -r Requirements.txt
 
 COPY . .
 
-CMD ["python", "App.py"]
+CMD ["python", "shiny_app.py"]
