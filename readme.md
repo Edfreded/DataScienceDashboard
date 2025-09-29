@@ -1,6 +1,6 @@
 # Statistics Dashboard
 
-A statistics dashboard created with Python and Dash, featuring a clean ETV (Extract, Transform, View) architecture.
+A statistics dashboard created with Python and Shiny, featuring a clean ETV (Extract, Transform, View) architecture.
 
 ## Architecture
 
@@ -10,11 +10,11 @@ A statistics dashboard created with Python and Dash, featuring a clean ETV (Extr
 - Holds your raw + cleaned dataset
 - Exposes port 5432
 
-**Container 2: Python (Dash app)**
-- Installed: See Requirements.txt (plotly, dash, dash-bootstrap-components, pandas, sqlalchemy/psycopg2)
+**Container 2: Python (Shiny app)**
+- Installed: See Requirements.txt (plotly, shiny, shinywidgets, pandas, sqlalchemy/psycopg2)
 - Read from Datasets directory for datasets
 - Connects to PostgreSQL for data (Planned)
-- Exposes port 8050 (frontend)
+- Exposes port 8000 (frontend)
 
 ### Code Structure (ETV Pattern)
 
@@ -29,17 +29,18 @@ A statistics dashboard created with Python and Dash, featuring a clean ETV (Extr
 - Cleans, aggregates, reshapes data
 - Produces chart-ready DataFrames (e.g., group by category, calculate KPIs, etc)
 
-**View (Dash app)**
+**View (Shiny app)**
 - Module: `Load` directory
 - Imports transformed DataFrames
-- Defines Dash layout (multipage setup)
-- Uses Bootstrap components for styling
-- Handles callbacks for interactivity (e.g., click → drill-down)
+- Defines Shiny UI layout
+- Uses custom CSS themes for styling
+- Handles reactive functions for interactivity
 
 **Styling**
-- Folder: `assets/` (optional for extra CSS)
-- Bootstrap theme via dash-bootstrap-components
-- Minimal custom CSS overrides if needed
+- Folder: `assets/css/` for CSS themes
+- Multiple themes: default, retro, dark, dark_blue
+- Plotly themes in `assets/plotly_themes/`
+- Theme selection in `shiny_app.py`
 
 ## Setup
 
@@ -93,7 +94,7 @@ See test files as an example for structure or where to start
 1. Data loaded into Postgres (raw → cleaned)
 2. Extract queries tables
 3. Transform prepares DataFrames
-4. View presents multipage interactive dashboards with drill-down
+4. View presents interactive dashboard with statistics and charts
 
 ## Development Notes
 
@@ -109,5 +110,5 @@ See test files as an example for structure or where to start
 ## Benefits
 - Clear separation of concerns (ETV)
 - Scales well if datasets grow (Postgres handles heavy lifting)
-- Professional frontend with Bootstrap
+- Professional frontend with custom themes
 - Easy to dockerize, extend, or deploy

@@ -5,12 +5,16 @@ from shinywidgets import output_widget, render_widget
 from Extract.Extract_Test import extract_car_data
 from Transform.Transform_Test import clean_and_transform_data, create_summary_stats
 
-def create_dashboard_ui(css_file="retro_theme.css"):
-    """Create the main dashboard UI"""
+def create_dashboard_ui(css_file=None):
+    """Create the main dashboard UI with optional custom CSS"""
+    head_elements = []
+    
+    # Use provided CSS file or fall back to default
+    css_to_use = css_file or 'css/default_theme.css'
+    head_elements.append(ui.tags.link(rel="stylesheet", href=css_to_use))
+    
     return ui.page_fluid(
-        ui.tags.head(
-            ui.tags.link(rel="stylesheet", href=css_file)
-        ),
+        ui.tags.head(*head_elements),
         ui.div(
             ui.h1("Car Sales Dashboard", class_="dashboard-title"),
             
