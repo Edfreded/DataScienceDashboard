@@ -1,25 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-/* Retro theme variables */
+/* Dark theme variables */
 :root {
   /* Base Colors */
-  --primary-color: #ff6b9d;
-  --secondary-color: #c44569;
-  --accent-color: #ff9ff3;
-  --background-primary: #1a0d2e;
-  --background-secondary: #2d1b3d;
-  --background-gradient: linear-gradient(135deg, #1a0d2e 0%, #16213e 50%, #0f3460 100%);
+  --primary-color: #bb86fc;
+  --secondary-color: #9c4dcc;
+  --accent-color: #03dac6;
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --background-gradient: linear-gradient(135deg, #121212 0%, #1e1e1e 50%, #2a2a2a 100%);
   
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #ff9ff3;
-  --text-accent: #ff6b9d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #03dac6;
+  --text-accent: #bb86fc;
   
   /* Interactive Elements */
   --border-color: var(--primary-color);
   --border-hover: var(--accent-color);
-  --shadow-color: rgba(255, 107, 157, 0.3);
-  --shadow-hover: rgba(255, 107, 157, 0.5);
+  --shadow-color: rgba(187, 134, 252, 0.3);
+  --shadow-hover: rgba(187, 134, 252, 0.5);
   
   /* Spacing */
   --spacing-xs: 8px;
