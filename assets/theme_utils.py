@@ -16,14 +16,14 @@ def get_available_themes():
     return list(THEMES.keys())
 
 def setup_plotly_colors(theme_name=None):
-    """Set up Plotly to use theme colors and appropriate template"""
+    """Set up Plotly to use theme colors from config"""
     theme_name = theme_name or DEFAULT_THEME
     colors = get_theme_colors(theme_name)
     
-    # Choose appropriate base template based on theme
-    if theme_name in ['light', 'default']:
-        pio.templates.default = "plotly_white"  # Light background for light themes
-    else:
-        pio.templates.default = "plotly_dark"   # Dark background for dark themes
+    # Set dark template for better contrast with your themes
+    pio.templates.default = "plotly_dark"
+    
+    # Apply the theme colors to the dark template
+    pio.templates["plotly_dark"].layout.colorway = colors
     
     return colors

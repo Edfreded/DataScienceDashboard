@@ -1,12 +1,12 @@
 from shiny import App
-from Load.Load_Test_1 import create_dashboard_ui, create_dashboard_server
+from Load.Load_Test_2 import create_dashboard_ui, create_dashboard_server
 from assets.theme_utils import get_theme_css_file, setup_plotly_colors
 from Config import ASSETS_PATH
 
 def create_app():
     """Create and configure the Shiny app"""
-    # Change this line to switch themes: 'retro', 'light', 'default', 'dark_blue', 'dark'
-    theme_name = 'dark'
+    # Change this line to switch themes: 'retro', 'light', 'default', 'dark_blue', 'dark', 'test1'
+    theme_name = 'test1'
     
     # Get theme CSS file and set up Plotly colors
     css_file = get_theme_css_file(theme_name)
