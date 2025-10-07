@@ -22,7 +22,7 @@
     --shadow-hover: rgba(255, 107, 157, 0.5);
 
     /* Row Height */
-    --layer-height: 15vh;
+    --layer-height: calc(100vh / 12);
 
     /* Spacing */
     --spacing-xs: 0.25vh;
@@ -51,6 +51,7 @@
     --transition-slow: 0.5s ease;
 }
 
+/* GENERAL */
 
 body {
     background: var(--background-gradient);
@@ -59,14 +60,50 @@ body {
     color: var(--text-primary);
 }
 
-.card-grid {
+/* LAYERS */
+
+[class*="card-grid"] {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: var(--spacing-md);
     padding-top: var(--spacing-md);
     padding-bottom: var(--spacing-md);
-    height: var(--layer-height);
+    height: calc(var(--layer-height) * var(--grid-multiplier, 1));
 }
+
+.card-grid-1 {
+    --grid-multiplier: 1;
+}
+
+.card-grid-2 {
+    --grid-multiplier: 2;
+}
+
+.card-grid-3 {
+    --grid-multiplier: 3;
+}
+
+.card-grid-4 {
+    --grid-multiplier: 4;
+}
+
+.card-grid-6 {
+    --grid-multiplier: 6;
+}
+
+.card-grid-8 {
+    --grid-multiplier: 8;
+}
+
+.card-grid-10 {
+    --grid-multiplier: 10;
+}
+
+.card-grid-12 {
+    --grid-multiplier: 12;
+}
+
+/* CARDS */
 
 .card {
     background: linear-gradient(145deg, var(--background-primary), var(--background-secondary));
@@ -112,6 +149,9 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+
+
+/* PLOTLY */
 
 /* For
 ce Plotly charts to respect card-grid height constraints */

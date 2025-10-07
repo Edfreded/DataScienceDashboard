@@ -135,5 +135,74 @@ def create_dashboard_server():
                 hovertemplate='<b>%{label}</b><br>Cars: %{value}<br>Percentage: %{percent}<extra></extra>'
             )
             return fig
+
+        @output
+        @render_widget
+        def year_trend_chart():
+            _, stats = get_data()
+            if stats is None:
+                fig = go.Figure().add_annotation(text="No data available")
+                fig.update_layout(height=400)
+                return fig
+            
+            year_data = stats.get('cars_by_year', {})
+            if not year_data:
+                fig = go.Figure().add_annotation(text="No year data available")
+                fig.update_layout(height=400)
+                return fig
+            
+            sorted_years = sorted(year_data.items())
+            fig = px.line(
+                x=[year for year, count in sorted_years],
+                y=[count for year, count in sorted_years],
+                title="Number of Cars by Year",
+                labels={'x': 'Year', 'y': 'Number of Cars'},
+                markers=True
+            )
+            fig.update_layout(
+                height=400,
+                hovermode='x unified',
+                margin=dict(l=50, r=50, t=60, b=50),
+                autosize=True
+            )
+            fig.update_traces(
+                hovertemplate='<b>Year %{x}</b><br>Cars: %{y}<extra></extra>',
+                line=dict(width=3),
+                marker=dict(size=8)
+            )
+            return fig
+        
+        @output
+        @render_widget
+        def price_distribution_chart():
+            data, _ = get_data()
+            if data is None:
+                fig = go.Figure().add_annotation(text="No data available")
+                fig.update_layout(height=400)
+                return fig
+            
+            if 'Price' not in data.columns:
+                fig = go.Figure().add_annotation(text="No price data available")
+                fig.update_layout(height=400)
+                return fig
+            
+            fig = px.histogram(
+                data,
+                x='Price',
+                nbins=30,
+                title="Price Distribution",
+                labels={'Price': 'Price (Lakhs)', 'count': 'Number of Cars'}
+            )
+            fig.update_layout(
+                height=400,
+                showlegend=False,
+                bargap=0.1,
+                margin=dict(l=50, r=50, t=60, b=50),
+                autosize=True
+            )
+            fig.update_traces(
+                hovertemplate='<b>Price Range</b><br>₹%{x:.1f}L<br>Cars: %{y}<extra></extra>'
+            )
+            return fig
     
     return server
