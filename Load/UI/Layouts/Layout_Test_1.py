@@ -107,8 +107,8 @@ def create_dashboard_ui(css_file=None):
     )
 
 def create_controls_section():
-    """Controls section using card component"""
-    controls_content = ui.div(
+    """Controls section with built-in styling"""
+    return ui.div(
         ui.h3("Filters & Controls", style="color: var(--text-accent); margin-bottom: var(--spacing-md);"),
         ui.div(
             ui.div(
@@ -135,5 +135,3 @@ def create_controls_section():
         ),
         class_="controls-section"
     )
-    
-    return DashboardCards.control_card(controls_content)
