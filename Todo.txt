@@ -1,0 +1,13 @@
+Dashboard:
+    Navigationbar/ header/ sidebar
+    Multipage support
+    Redirects
+    Filter
+    background ui design
+    Theme Selector
+
+Background:
+    Theme consistency and cleanup
+    Hot reload fix
+    Speed/ optimization
+    Actual dataset use
