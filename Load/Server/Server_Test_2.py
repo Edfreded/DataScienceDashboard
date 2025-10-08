@@ -2,30 +2,24 @@ from shiny import ui, render, reactive
 import plotly.express as px
 import plotly.graph_objects as go
 from shinywidgets import render_widget
-import pandas as pd
-from Extract.Extract_Test import extract_car_data
-from Transform.Transform_Test import clean_and_transform_data, create_summary_stats
 
-def create_dashboard_server():
+def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         # Reactive data loading
+
         @reactive.calc
-        def get_data():
-            print("Loading data...")
-            raw_data = extract_car_data()
-            if raw_data.empty:
-                return None, None
-            
-            cleaned_data = clean_and_transform_data(raw_data)
-            summary_stats = create_summary_stats(cleaned_data)
-            return cleaned_data, summary_stats
+        def get_cleaned_data():
+            return cleaned_data
         
+        @reactive.calc  
+        def get_summary_stats():
+            return summary_stats
         
         # Stat Cards
         @output
         @render.ui
         def total_cars_card():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 return ui.div("No data", class_="card-value")
             
@@ -37,7 +31,7 @@ def create_dashboard_server():
         @output
         @render.ui
         def avg_price_card():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 return ui.div("No data", class_="card-value")
             
@@ -49,7 +43,7 @@ def create_dashboard_server():
         @output
         @render.ui
         def fuel_types_card():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 return ui.div("No data", class_="card-value")
             
@@ -62,7 +56,7 @@ def create_dashboard_server():
         @output
         @render.ui
         def locations_card():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 return ui.div("No data", class_="card-value")
             
@@ -76,7 +70,7 @@ def create_dashboard_server():
         @output
         @render_widget
         def fuel_chart():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
@@ -106,7 +100,7 @@ def create_dashboard_server():
         @output
         @render_widget
         def location_chart():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
@@ -133,7 +127,7 @@ def create_dashboard_server():
         @output
         @render_widget
         def year_trend_chart():
-            _, stats = get_data()
+            stats = get_summary_stats()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
@@ -166,7 +160,7 @@ def create_dashboard_server():
         @output
         @render_widget
         def price_distribution_chart():
-            data, _ = get_data()
+            data = get_cleaned_data()
             if data is None:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
