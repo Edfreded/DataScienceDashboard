@@ -2,7 +2,7 @@ from shiny import App
 from Config import ASSETS_PATH
 from Extract.Extract_Test import extract_car_data
 from Transform.Transform_Test import clean_and_transform_data, create_summary_stats
-from Load.Load_Test_2 import create_dashboard_ui, create_dashboard_server
+from Load.Load_Test import create_dashboard_ui, create_dashboard_server
 
 
 def orchestrator_test_1(css_file=None):

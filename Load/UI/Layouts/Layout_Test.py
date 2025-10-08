@@ -1,8 +1,8 @@
 from shiny import ui
 from shinywidgets import output_widget
-from Load.UI.Components.Cards.Card_test_2 import DashboardCards
-from Load.UI.Components.Rows.Rows_test_2 import DashboardRows
-from Load.UI.Components.Rows.Rows_test_2 import DashboardContainers
+from Load.UI.Components.Cards.Card_test import DashboardCards
+from Load.UI.Components.Rows.Rows_test import DashboardRows
+from Load.UI.Components.Containers.Containers_test import DashboardContainers
 
 def create_dashboard_ui(css_file=None):
 
