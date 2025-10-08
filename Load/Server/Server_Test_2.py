@@ -21,7 +21,7 @@ def create_dashboard_server():
             return cleaned_data, summary_stats
         
         
-        # Stat Cards (using raw data - no filtering)
+        # Stat Cards
         @output
         @render.ui
         def total_cars_card():
@@ -79,13 +79,11 @@ def create_dashboard_server():
             _, stats = get_data()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
-                fig.update_layout(height=400)
                 return fig
             
             fuel_data = stats.get('price_by_fuel', {})
             if not fuel_data:
                 fig = go.Figure().add_annotation(text="No fuel data available")
-                fig.update_layout(height=400)
                 return fig
             
             fig = px.bar(
@@ -95,7 +93,6 @@ def create_dashboard_server():
                 labels={'x': 'Fuel Type', 'y': 'Average Price (Lakhs)'}
             )
             fig.update_layout(
-                height=400,
                 showlegend=False,
                 hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
@@ -112,13 +109,11 @@ def create_dashboard_server():
             _, stats = get_data()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
-                fig.update_layout(height=400)
                 return fig
             
             location_data = stats.get('cars_by_location', {})
             if not location_data:
                 fig = go.Figure().add_annotation(text="No location data available")
-                fig.update_layout(height=400)
                 return fig
             
             fig = px.pie(
@@ -127,7 +122,6 @@ def create_dashboard_server():
                 title="Cars by Location"
             )
             fig.update_layout(
-                height=400,
                 margin=dict(l=50, r=50, t=60, b=50),
                 autosize=True
             )
@@ -142,13 +136,11 @@ def create_dashboard_server():
             _, stats = get_data()
             if stats is None:
                 fig = go.Figure().add_annotation(text="No data available")
-                fig.update_layout(height=400)
                 return fig
             
             year_data = stats.get('cars_by_year', {})
             if not year_data:
                 fig = go.Figure().add_annotation(text="No year data available")
-                fig.update_layout(height=400)
                 return fig
             
             sorted_years = sorted(year_data.items())
@@ -160,7 +152,6 @@ def create_dashboard_server():
                 markers=True
             )
             fig.update_layout(
-                height=400,
                 hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
                 autosize=True
@@ -178,12 +169,10 @@ def create_dashboard_server():
             data, _ = get_data()
             if data is None:
                 fig = go.Figure().add_annotation(text="No data available")
-                fig.update_layout(height=400)
                 return fig
             
             if 'Price' not in data.columns:
                 fig = go.Figure().add_annotation(text="No price data available")
-                fig.update_layout(height=400)
                 return fig
             
             fig = px.histogram(
@@ -194,7 +183,6 @@ def create_dashboard_server():
                 labels={'Price': 'Price (Lakhs)', 'count': 'Number of Cars'}
             )
             fig.update_layout(
-                height=400,
                 showlegend=False,
                 bargap=0.1,
                 margin=dict(l=50, r=50, t=60, b=50),

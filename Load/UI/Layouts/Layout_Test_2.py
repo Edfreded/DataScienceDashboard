@@ -16,21 +16,20 @@ def create_dashboard_ui(css_file=None):
         ui.tags.head(*head_elements),
         ui.div(
             DashboardRows.row_2(
-                DashboardCards.card_stat(ui.output_ui("total_cars_card")),
-                DashboardCards.card_stat(ui.output_ui("avg_price_card")),
-                DashboardCards.card_stat(ui.output_ui("fuel_types_card")),
-                DashboardCards.card_stat(ui.output_ui("locations_card")),
+                DashboardCards.card_stat_ui("total_cars_card"),
+                DashboardCards.card_stat_ui("avg_price_card"),
+                DashboardCards.card_stat_ui("fuel_types_card"),
+                DashboardCards.card_stat_ui("locations_card"),
             ),
            
             DashboardRows.row_4(
-                DashboardCards.card(output_widget("fuel_chart")),
-                DashboardCards.card(output_widget("location_chart"))
+                DashboardCards.card_graph("fuel_chart"),
+                DashboardCards.card_graph("location_chart")
             ),
 
-            # Full width charts - each in their own row
             DashboardRows.row_6(
-                DashboardCards.card(output_widget("year_trend_chart")),
-                DashboardCards.card(output_widget("price_distribution_chart"))
+                DashboardCards.card_graph("year_trend_chart"),
+                DashboardCards.card_graph("price_distribution_chart")
             ),
             
             class_="dashboard-container"
