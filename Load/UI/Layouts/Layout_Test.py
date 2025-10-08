@@ -11,8 +11,6 @@ def create_dashboard_ui(css_file=None):
     css_to_use = css_file or 'css/default_theme.css'
     head_elements.append(ui.tags.link(rel="stylesheet", href=css_to_use))
     
-
-    
     return ui.page_fluid(
         ui.tags.head(*head_elements),
         ui.div(

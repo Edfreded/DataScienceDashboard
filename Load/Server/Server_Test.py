@@ -5,8 +5,8 @@ from shinywidgets import render_widget
 
 def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
+        
         # Reactive data loading
-
         @reactive.calc
         def get_cleaned_data():
             return cleaned_data

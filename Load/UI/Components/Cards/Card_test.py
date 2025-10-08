@@ -2,8 +2,6 @@ from shiny import ui
 from shinywidgets import output_widget
 
 class DashboardCards:
-    """Generic card components for dashboard elements"""
-    
     @staticmethod
     def card(content, css_class="card"):
         return ui.div(content, class_=css_class)

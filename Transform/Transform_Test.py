@@ -2,27 +2,18 @@ import pandas as pd
 import numpy as np
 
 def clean_and_transform_data(df):
-    """
-    Clean and transform the car sales data
-    Args: df - raw pandas DataFrame
-    Returns: cleaned pandas DataFrame
-    """
     if df.empty:
         return df
     
-    # Make a copy to avoid modifying original
     cleaned_df = df.copy()
     
-    # Clean numeric columns
     numeric_columns = ['Year', 'Kilometers_Driven', 'Seats', 'Price']
     for col in numeric_columns:
         if col in cleaned_df.columns:
             cleaned_df[col] = pd.to_numeric(cleaned_df[col], errors='coerce')
     
-    # Remove rows with missing critical data
     cleaned_df = cleaned_df.dropna(subset=['Name', 'Price'])
     
-    # Fill missing values
     cleaned_df['Fuel_Type'] = cleaned_df['Fuel_Type'].fillna('Unknown')
     cleaned_df['Transmission'] = cleaned_df['Transmission'].fillna('Unknown')
     cleaned_df['Location'] = cleaned_df['Location'].fillna('Unknown')
@@ -31,10 +22,6 @@ def clean_and_transform_data(df):
     return cleaned_df
 
 def create_summary_stats(df):
-    """
-    Create summary statistics for dashboard
-    Returns: dictionary with summary data
-    """
     if df.empty:
         return {}
     
