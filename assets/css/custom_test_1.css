@@ -103,6 +103,39 @@ body {
     --grid-multiplier: 12;
 }
 
+/* CONTAINERS - for splitting rows */
+
+/* Horizontal split (side by side) */
+.container-horizontal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+/* Vertical split (stacked) */
+.container-vertical {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+/* Custom splits */
+.container-horizontal-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+.container-horizontal-2-1 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
 /* CARDS - Base Styles */
 
 /* Base card class with all common properties */
@@ -172,7 +205,7 @@ body {
 .card-graph .html-widget {
     width: 100% !important;
     height: 100% !important;
-}   
+}
 
 /* Ensure Plotly graph divs fill their containers in any card type */
 .card .js-plotly-plot .plotly-graph-div,

@@ -2,6 +2,7 @@ from shiny import ui
 from shinywidgets import output_widget
 from Load.UI.Components.Cards.Card_test_2 import DashboardCards
 from Load.UI.Components.Rows.Rows_test_2 import DashboardRows
+from Load.UI.Components.Rows.Rows_test_2 import DashboardContainers
 
 def create_dashboard_ui(css_file=None):
 
@@ -21,10 +22,12 @@ def create_dashboard_ui(css_file=None):
                 DashboardCards.card_stat_ui("fuel_types_card"),
                 DashboardCards.card_stat_ui("locations_card"),
             ),
-           
+
             DashboardRows.row_4(
-                DashboardCards.card_graph("fuel_chart"),
-                DashboardCards.card_graph("location_chart")
+                DashboardContainers.horizontal_2_1(
+                    DashboardCards.card_graph("fuel_chart"),
+                    DashboardCards.card_graph("location_chart")
+                )
             ),
 
             DashboardRows.row_6(
