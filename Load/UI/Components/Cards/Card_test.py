@@ -16,3 +16,10 @@ class DashboardCards:
             output_widget(widget_id, width="100%", height="100%"), 
             class_=css_class
         )
+
+    @staticmethod
+    def card_map(widget_id, css_class="card-map"):
+        return ui.div(
+            output_widget(widget_id, width="100%", height="100%"), 
+            class_=css_class
+        )

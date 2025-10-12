@@ -18,10 +18,12 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         @reactive.calc
         def get_latest_year_data():
             data = get_cleaned_data()
-            if data is None or data.empty:
+            if data is None or len(data) == 0:
                 return None
             latest_year = data['year'].max()
             return data[data['year'] == latest_year]
+        
+
         
         # Stat Cards
         @output
@@ -78,13 +80,20 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         @output
         @render_widget
         def world_gdp_map():
-            data = get_latest_year_data()
-            if data is None or data.empty:
+            data = get_cleaned_data()
+            if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
+            # Get available years and create dropdown options
+            available_years = sorted(data['year'].unique())
+            latest_year = available_years[-1]
+            
+            # Create initial map with latest year
+            initial_data = data.loc[data['year'] == latest_year].copy()
+            
             fig = px.choropleth(
-                data,
+                initial_data,
                 locations="countrycode",
                 color="gdp_per_capita",
                 hover_name="country",
@@ -93,18 +102,48 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                     'year': True
                 },
                 color_continuous_scale="Viridis",
-                title=f"GDP per Capita by Country ({data['year'].iloc[0]})",
+                title=f"GDP per Capita by Country",
                 labels={'gdp_per_capita': 'GDP per Capita ($)'}
             )
+            
+            # Create dropdown buttons for each year
+            buttons = []
+            for year in available_years:
+                year_data = data.loc[data['year'] == year].copy()
+                buttons.append(
+                    dict(
+                        label=str(year),
+                        method="restyle",
+                        args=[{
+                            "z": [year_data['gdp_per_capita'].tolist()],
+                            "locations": [year_data['countrycode'].tolist()],
+                            "text": [year_data['country'].tolist()]
+                        }]
+                    )
+                )
             
             fig.update_layout(
                 geo=dict(
                     showframe=False,
                     showcoastlines=True,
-                    projection_type='equirectangular'
+                    projection_type='natural earth'
                 ),
                 margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
+                autosize=True,
+                updatemenus=[
+                    dict(
+                        buttons=buttons,
+                        direction="down",
+                        showactive=True,
+                        x=0.1,
+                        y=1.02,
+                        xanchor="left",
+                        yanchor="top",
+                        bgcolor="rgba(255, 107, 157, 0.1)",
+                        bordercolor="rgba(255, 107, 157, 0.3)",
+                        font=dict(color="white")
+                    )
+                ]
             )
             
             return fig
@@ -113,14 +152,20 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         @output
         @render_widget
         def world_growth_map():
-            data = get_latest_year_data()
-            if data is None or data.empty:
+            data = get_cleaned_data()
+            if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            # Filter out extreme outliers for better visualization
-            growth_data = data.dropna(subset=['gdp_growth'])
-            if growth_data.empty:
+            # Get available years and create dropdown options
+            available_years = sorted(data['year'].unique())
+            latest_year = available_years[-1]
+            
+            # Create initial map with latest year
+            initial_data = data.loc[data['year'] == latest_year].copy()
+            growth_data = initial_data.dropna(subset=['gdp_growth'])
+            
+            if len(growth_data) == 0:
                 fig = go.Figure().add_annotation(text="No growth data available")
                 return fig
             
@@ -135,18 +180,49 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 },
                 color_continuous_scale="RdYlGn",
                 color_continuous_midpoint=0,
-                title=f"GDP Growth Rate by Country ({growth_data['year'].iloc[0]})",
+                title=f"GDP Growth Rate by Country",
                 labels={'gdp_growth': 'GDP Growth (%)'}
             )
+            
+            # Create dropdown buttons for each year
+            buttons = []
+            for year in available_years:
+                year_data = data.loc[data['year'] == year].dropna(subset=['gdp_growth'])
+                if len(year_data) > 0:
+                    buttons.append(
+                        dict(
+                            label=str(year),
+                            method="restyle",
+                            args=[{
+                                "z": [year_data['gdp_growth'].tolist()],
+                                "locations": [year_data['countrycode'].tolist()],
+                                "text": [year_data['country'].tolist()]
+                            }]
+                        )
+                    )
             
             fig.update_layout(
                 geo=dict(
                     showframe=False,
                     showcoastlines=True,
-                    projection_type='equirectangular'
+                    projection_type='natural earth'
                 ),
                 margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
+                autosize=True,
+                updatemenus=[
+                    dict(
+                        buttons=buttons,
+                        direction="down",
+                        showactive=True,
+                        x=0.1,
+                        y=1.02,
+                        xanchor="left",
+                        yanchor="top",
+                        bgcolor="rgba(255, 107, 157, 0.1)",
+                        bordercolor="rgba(255, 107, 157, 0.3)",
+                        font=dict(color="white")
+                    )
+                ]
             )
             
             return fig
@@ -190,7 +266,7 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         @render_widget
         def gdp_trend_chart():
             data = get_cleaned_data()
-            if data is None or data.empty:
+            if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
