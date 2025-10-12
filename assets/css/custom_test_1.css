@@ -194,7 +194,7 @@ body {
 .card .html-widget-output,
 .card-graph .shiny-html-output,
 .card-graph .html-widget-output,
-.card-map .shiny-html-output, 
+.card-map .shiny-html-output,
 .card-map .html-widget-output {
     flex: 1;
     height: 100%;
@@ -209,45 +209,15 @@ body {
 .card-graph .html-widget,
 .card-map .js-plotly-plot,
 .card-map .plotly,
-.card-map .html-widget{
+.card-map .html-widget {
     width: 100% !important;
     height: 100% !important;
 }
 
 /* Ensure Plotly graph divs fill their containers in any card type */
 .card .js-plotly-plot .plotly-graph-div,
-.card-graph .js-plotly-plot .plotly-graph-div, 
+.card-graph .js-plotly-plot .plotly-graph-div,
 .card-map .js-plotly-plot .plotly-graph-div {
     width: 100% !important;
     height: 100% !important;
-}
-/* Filter Controls Styling */
-.filter-controls {
-    text-align: center;
-    padding: var(--spacing-lg);
-}
-
-.filter-controls h4 {
-    font-family: var(--font-family);
-    font-weight: 700;
-    margin-bottom: var(--spacing-md);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Slider styling */
-.filter-controls .form-group {
-    margin-bottom: 0;
-}
-
-.filter-controls .shiny-input-container {
-    margin: 0 auto;
-    max-width: 400px;
-}
-
-.filter-controls label {
-    color: var(--text-secondary);
-    font-weight: 600;
-    margin-bottom: var(--spacing-sm);
-    display: block;
 }

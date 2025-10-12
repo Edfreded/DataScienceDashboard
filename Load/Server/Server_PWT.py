@@ -85,11 +85,9 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            # Get available years and create dropdown options
-            available_years = sorted(data['year'].unique())
-            latest_year = available_years[-1]
+            available_years = sorted(data['year'].unique(), reverse=True)
+            latest_year = available_years[0]
             
-            # Create initial map with latest year
             initial_data = data.loc[data['year'] == latest_year].copy()
             
             fig = px.choropleth(
@@ -106,7 +104,6 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 labels={'gdp_per_capita': 'GDP per Capita ($)'}
             )
             
-            # Create dropdown buttons for each year
             buttons = []
             for year in available_years:
                 year_data = data.loc[data['year'] == year].copy()
@@ -135,13 +132,20 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                         buttons=buttons,
                         direction="down",
                         showactive=True,
+                        active=0, 
                         x=0.1,
                         y=1.02,
                         xanchor="left",
                         yanchor="top",
-                        bgcolor="rgba(255, 107, 157, 0.1)",
-                        bordercolor="rgba(255, 107, 157, 0.3)",
-                        font=dict(color="white")
+                        bgcolor="rgba(45, 27, 61, 0.95)",
+                        bordercolor="#ff6b9d",
+                        borderwidth=2,
+                        font=dict(
+                            color="#ffffff",
+                            family="Orbitron, monospace",
+                            size=12
+                        ),
+                        pad=dict(t=5, b=5, l=10, r=10)
                     )
                 ]
             )
@@ -157,11 +161,9 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            # Get available years and create dropdown options
-            available_years = sorted(data['year'].unique())
-            latest_year = available_years[-1]
+            available_years = sorted(data['year'].unique(), reverse=True)
+            latest_year = available_years[0]
             
-            # Create initial map with latest year
             initial_data = data.loc[data['year'] == latest_year].copy()
             growth_data = initial_data.dropna(subset=['gdp_growth'])
             
@@ -184,7 +186,6 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 labels={'gdp_growth': 'GDP Growth (%)'}
             )
             
-            # Create dropdown buttons for each year
             buttons = []
             for year in available_years:
                 year_data = data.loc[data['year'] == year].dropna(subset=['gdp_growth'])
@@ -214,13 +215,20 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                         buttons=buttons,
                         direction="down",
                         showactive=True,
+                        active=0,
                         x=0.1,
                         y=1.02,
                         xanchor="left",
                         yanchor="top",
-                        bgcolor="rgba(255, 107, 157, 0.1)",
-                        bordercolor="rgba(255, 107, 157, 0.3)",
-                        font=dict(color="white")
+                        bgcolor="rgba(45, 27, 61, 0.95)",
+                        bordercolor="#ff6b9d",
+                        borderwidth=2,
+                        font=dict(
+                            color="#ffffff",
+                            family="Orbitron, monospace",
+                            size=12
+                        ),
+                        pad=dict(t=5, b=5, l=10, r=10)
                     )
                 ]
             )
@@ -270,7 +278,6 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            # Calculate global average GDP per capita by year
             yearly_avg = data.groupby('year')['gdp_per_capita'].mean().reset_index()
             
             fig = px.line(
