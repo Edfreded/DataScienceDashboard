@@ -1,5 +1,6 @@
 from shiny import App
 from Orchestrator.Orchestrator_Test import orchestrator_test_1
+from Orchestrator.Orchestrator_PWT import orchestrator_PWT
 from assets.theme_utils import get_theme_css_file, setup_plotly_colors
 
 def create_app():
@@ -11,7 +12,7 @@ def create_app():
     setup_plotly_colors(theme_name)
     
     # Create Shiny app
-    app = orchestrator_test_1(css_file=css_file)
+    app = orchestrator_PWT(css_file=css_file)
     
     return app
 

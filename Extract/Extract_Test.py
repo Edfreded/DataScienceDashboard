@@ -16,4 +16,3 @@ def extract_car_data():
     except Exception as e:
         print(f"Error extracting data: {e}")
         return pd.DataFrame()
-

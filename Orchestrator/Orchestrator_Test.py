@@ -14,7 +14,7 @@ def orchestrator_test_1(css_file=None):
     cleaned_data = clean_and_transform_data(raw_data)
     summary_stats = create_summary_stats(cleaned_data)
 
-    print("Starting Car Sales Dashboard Orchestrator...")
+    print("Starting Car Sales Dashboard...")
     app_ui = create_dashboard_ui(css_file=css_file)
     app_server = create_dashboard_server(
         cleaned_data=cleaned_data, 
