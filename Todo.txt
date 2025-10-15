@@ -11,12 +11,3 @@ Background:
     Hot reload fix
     Speed/ optimization
     Actual dataset use
-
-
-
-bugs
-plotly vh does not scale properly
-    smaller screens have overflow
-    plotly does not stay within given layout bounds. it should scale at the same rate of the ui Cards
-        it scales up (bigger) perfectly fine, bu scaling down does not happen
-    when browser window size is too small, you have too scroll, which i like, but on smaller screens, you get overlapping plotly

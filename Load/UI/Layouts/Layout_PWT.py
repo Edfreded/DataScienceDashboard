@@ -24,8 +24,10 @@ def create_dashboard_ui(css_file=None):
             
             # World Maps Row
             DashboardRows.row_6(
-                DashboardCards.card_map("world_gdp_map"),
-                DashboardCards.card_map("world_growth_map")                
+                DashboardContainers.horizontal_2_1(
+                    DashboardCards.card_map("world_gdp_map"),
+                    DashboardCards.card_map("world_growth_map")    
+                )            
             ),
             
             # Charts Row
