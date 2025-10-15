@@ -33,7 +33,5 @@ def create_dashboard_ui(css_file=None):
                 DashboardCards.card_graph("top_countries_chart"),
                 DashboardCards.card_graph("gdp_trend_chart")
             ),
-            
-            class_="dashboard-container"
         )
     )
