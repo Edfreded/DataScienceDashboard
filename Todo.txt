@@ -1,15 +1,14 @@
 Dashboard:
-    Navigationbar/ header/ sidebar
-    Multipage support
-    Redirects
+    navbar styling
+    plotly styling
     Filter - currently done in plotly, styling is hardcoded
-    plotly stylized
-    vertical vs horizontal layout cuts
     background ui design
     Theme Selector
 
 Background:
-    Theme consistency and cleanup
+    Plotly easier theme settup. currently hardcoded
+    Css cleanup, lots of bloat styling (see shiny navbar commit)
+    Css modules, currently everything is in one file
     Hot reload fix
     Speed/ optimization
     Actual dataset use
