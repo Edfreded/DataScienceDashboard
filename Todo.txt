@@ -3,6 +3,8 @@ Dashboard:
     Multipage support
     Redirects
     Filter - currently done in plotly, styling is hardcoded
+    plotly stylized
+    vertical vs horizontal layout cuts
     background ui design
     Theme Selector
 
