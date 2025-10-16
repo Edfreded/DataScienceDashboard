@@ -59,6 +59,57 @@ body {
     color: var(--text-primary);
 }
 
+/* NAVBAR */
+.nav-tabs {
+    height: calc(var(--layer-height) * 1) !important;
+    background: var(--background-secondary) !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+.nav-tabs .nav-link {
+    background: transparent !important;
+    border: 0px solid transparent !important;
+    color: var(--text-secondary) !important;
+    font-family: var(--font-family) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    padding-bottom: 0;
+    padding-top: 0;
+    margin-right: var(--spacing-xs) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all var(--transition-normal) !important;
+    height: calc(100% - var(--spacing-sm)) !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: var(--font-size-sm) !important;
+}
+
+.nav-tabs .nav-link:hover {
+    background: var(--background-primary) !important;
+    border-color: var(--border-hover) !important;
+    color: var(--text-primary) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 16px var(--shadow-color) !important;
+}
+
+.nav-tabs .nav-link.active {
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color)) !important;
+    border-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 6px 20px var(--shadow-hover) !important;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3) !important;
+}
+
+.tab-content {
+    overflow-y: auto !important;
+}
+
 /* LAYERS */
 
 [class*="card-grid"] {
@@ -84,23 +135,39 @@ body {
     --grid-multiplier: 4;
 }
 
+.card-grid-5 {
+    --grid-multiplier: 5;
+}
+
 .card-grid-6 {
     --grid-multiplier: 6;
+}
+
+.card-grid-7 {
+    --grid-multiplier: 7;
 }
 
 .card-grid-8 {
     --grid-multiplier: 8;
 }
 
+.card-grid-9 {
+    --grid-multiplier: 9;
+}
+
 .card-grid-10 {
     --grid-multiplier: 10;
+}
+
+.card-grid-11 {
+    --grid-multiplier: 11;
 }
 
 .card-grid-12 {
     --grid-multiplier: 12;
 }
 
-/* CONTAINERS - for splitting rows */
+/* CONTAINERS */
 
 /* Horizontal split (side by side) */
 .container-horizontal {
@@ -108,6 +175,9 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
     height: 100%;
+    /* Ensure containers maintain height during tab switches */
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 /* Vertical split (stacked) */
@@ -116,6 +186,9 @@ body {
     grid-template-rows: 1fr 1fr;
     gap: var(--spacing-md);
     height: 100%;
+    /* Ensure containers maintain height during tab switches */
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 /* Custom splits */
@@ -124,6 +197,9 @@ body {
     grid-template-columns: 1fr 2fr;
     gap: var(--spacing-md);
     height: 100%;
+    /* Ensure containers maintain height during tab switches */
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 .container-horizontal-2-1 {
@@ -131,6 +207,9 @@ body {
     grid-template-columns: 2fr 1fr;
     gap: var(--spacing-md);
     height: 100%;
+    /* Ensure containers maintain height during tab switches */
+    min-height: 100%;
+    box-sizing: border-box;
 }
 
 /* CARDS - Base Styles */
@@ -151,7 +230,7 @@ body {
     flex-direction: column;
     margin-top: var(--spacing-sm);
     margin-bottom: var(--spacing-sm);
-    overflow: hidden;
+    overflow: hidden; /*Keep cards from overflowing their boundaries*/
 }
 
 /* Hover effects for interactive cards */
