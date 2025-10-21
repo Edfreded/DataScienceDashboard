@@ -8,6 +8,7 @@ from Load.Server.Server_PWT_Overview import create_dashboard_server as create_ov
 from Load.Server.Server_PWT_GDP import create_gdp_analysis_server
 from Load.Server.Server_PWT_Economic import create_economic_indicators_server
 from Load.Server.Server_PWT_Explorer import create_data_explorer_server
+from Load.Server.Server_PWT_Filters import create_filters_server
 
 def create_dashboard_ui(css_file=None):
     head_elements = []
@@ -107,35 +108,15 @@ def create_dashboard_ui(css_file=None):
 
 def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
-        # Sidebar controls - reactive effects for future functionality
-        @reactive.effect
-        @reactive.event(input.theme_selector)
-        def update_theme():
-            # Theme switching logic can be added here later
-            print(f"Theme changed to: {input.theme_selector()}")
+        # Initialize filters server and get reactive filtered data
+        filters_server = create_filters_server(cleaned_data, summary_stats)(input, output, session)
+        filtered_data = filters_server['filtered_data']
+        filtered_summary_stats = filters_server['filtered_summary_stats']
         
-        @reactive.effect
-        @reactive.event(input.show_grid)
-        def toggle_grid():
-            # Grid visibility logic can be added here later
-            print(f"Grid visibility: {input.show_grid()}")
-        
-        @reactive.effect
-        @reactive.event(input.year_range)
-        def update_year_range():
-            # Year range filtering logic can be added here later
-            print(f"Year range changed to: {input.year_range()}")
-        
-        @reactive.effect
-        @reactive.event(input.region_filter)
-        def update_region():
-            # Region filtering logic can be added here later
-            print(f"Region filter changed to: {input.region_filter()}")
-        
-        # Pass original data to dashboard servers
-        create_overview_server(cleaned_data, summary_stats)(input, output, session)
-        create_gdp_analysis_server(cleaned_data, summary_stats)(input, output, session)
-        create_economic_indicators_server(cleaned_data, summary_stats)(input, output, session)
-        create_data_explorer_server(cleaned_data, summary_stats)(input, output, session)
+        # Pass filtered data to dashboard servers
+        create_overview_server(filtered_data, filtered_summary_stats)(input, output, session)
+        create_gdp_analysis_server(filtered_data, filtered_summary_stats)(input, output, session)
+        create_economic_indicators_server(filtered_data, filtered_summary_stats)(input, output, session)
+        create_data_explorer_server(filtered_data, filtered_summary_stats)(input, output, session)
     
     return server

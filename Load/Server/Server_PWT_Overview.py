@@ -6,14 +6,24 @@ from shinywidgets import render_widget
 def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         
-        # Reactive data loading
+        # Reactive data loading - handle both static data and reactive calculations
         @reactive.calc
         def get_cleaned_data():
-            return cleaned_data
+            if hasattr(cleaned_data, '__call__'):
+                # If cleaned_data is a reactive calculation, call it
+                return cleaned_data()
+            else:
+                # If it's static data, return as is
+                return cleaned_data
         
         @reactive.calc  
         def get_summary_stats():
-            return summary_stats
+            if hasattr(summary_stats, '__call__'):
+                # If summary_stats is a reactive calculation, call it
+                return summary_stats()
+            else:
+                # If it's static data, return as is
+                return summary_stats
         
         @reactive.calc
         def get_latest_year_data():
