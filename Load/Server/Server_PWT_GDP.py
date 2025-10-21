@@ -6,10 +6,15 @@ from shinywidgets import render_widget
 def create_gdp_analysis_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         
-        # Reactive data loading
+        # Reactive data loading - handle both static data and reactive calculations
         @reactive.calc
         def get_cleaned_data():
-            return cleaned_data
+            if hasattr(cleaned_data, '__call__'):
+                # If cleaned_data is a reactive calculation, call it
+                return cleaned_data()
+            else:
+                # If it's static data, return as is
+                return cleaned_data
         
         @reactive.calc
         def get_latest_year_data():

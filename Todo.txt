@@ -1,14 +1,12 @@
 Dashboard:
-    navbar styling
-    plotly styling
-    Filter - currently done in plotly, styling is hardcoded
-    background ui design
     Theme Selector
+    proper filters
 
 Background:
+    sidebar styling through css
     Plotly easier theme settup. currently hardcoded
-    Css cleanup, lots of bloat styling (see shiny navbar commit)
+    Css cleanup, lots of bloat styling (see shiny sidebar commits)
     Css modules, currently everything is in one file
     Hot reload fix
     Speed/ optimization
-    Actual dataset use
+    Actual dataset features use
