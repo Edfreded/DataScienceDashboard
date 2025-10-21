@@ -275,22 +275,15 @@ body::before {
 }
 
 
-/* CUSTOM SIDEBAR */
+/* FLOATING SIDEBAR BUTTON */
 
-/* Page layout with sidebar button */
-.page-with-sidebar {
-    display: flex;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-md);
-    height: calc(100vh - var(--layer-height));
-}
-
-/* Sidebar button container */
-.sidebar-button-container {
-    flex-shrink: 0;
-    display: flex;
-    align-items: flex-start;
-    padding-top: var(--spacing-sm);
+/* Floating sidebar button container - positioned to appear in navbar */
+.floating-sidebar-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    left: var(--spacing-md);
+    z-index: 1050;
+    height: calc(var(--layer-height) - var(--spacing-md));
 }
 
 /* Custom sidebar toggle button */
@@ -321,19 +314,18 @@ body::before {
     background: linear-gradient(145deg, var(--accent-color), var(--primary-color)) !important;
 }
 
-/* Content container */
-.content-container {
-    flex: 1;
-    height: 100%;
+/* Adjust navbar to make room for sidebar button */
+.nav-tabs {
+    margin-left: calc(var(--layer-height) + var(--spacing-sm)) !important;
 }
 
 /* Custom sidebar content */
 .custom-sidebar-content {
     position: fixed;
-    top: calc(var(--layer-height) + var(--spacing-lg));
-    left: calc(var(--spacing-md) + var(--layer-height));
+    top: calc(var(--layer-height) + var(--spacing-sm));
+    left: var(--spacing-md);
     width: 300px;
-    max-height: calc(100vh - var(--layer-height) - var(--spacing-xl));
+    max-height: calc(100vh - var(--layer-height) - var(--spacing-lg));
     z-index: 1040;
     background: linear-gradient(145deg, var(--background-primary), var(--background-secondary));
     border: 2px solid var(--border-color);

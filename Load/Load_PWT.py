@@ -29,82 +29,36 @@ def create_dashboard_ui(css_file=None):
             """)
         ),
         
-        # Navbar only in header row
+        # Single sidebar button positioned outside navset_tab
+        ui.div(
+            ui.input_action_button(
+                "sidebar_toggle", 
+                "☰", 
+                class_="custom-sidebar-btn"
+            ),
+            class_="floating-sidebar-btn"
+        ),
+        
+        # Navbar with content panels
         ui.navset_tab(
             ui.nav_panel(
                 "Overview",
-                ui.div(
-                    ui.div(
-                        ui.input_action_button(
-                            "sidebar_toggle1", 
-                            "☰", 
-                            class_="custom-sidebar-btn"
-                        ),
-                        class_="sidebar-button-container"
-                    ),
-                    ui.div(
-                        create_overview_ui(),
-                        class_="content-container"
-                    ),
-                    class_="page-with-sidebar"
-                )
+                create_overview_ui()
             ),
             
             ui.nav_panel(
-                "GDP Analysis",
-                ui.div(
-                    ui.div(
-                        ui.input_action_button(
-                            "sidebar_toggle2", 
-                            "☰", 
-                            class_="custom-sidebar-btn"
-                        ),
-                        class_="sidebar-button-container"
-                    ),
-                    ui.div(
-                        create_gdp_analysis_ui(),
-                        class_="content-container"
-                    ),
-                    class_="page-with-sidebar"
-                )
+                "GDP Analysis", 
+                create_gdp_analysis_ui()
             ),
             
             ui.nav_panel(
                 "Economic Indicators",
-                ui.div(
-                    ui.div(
-                        ui.input_action_button(
-                            "sidebar_toggle3", 
-                            "☰", 
-                            class_="custom-sidebar-btn"
-                        ),
-                        class_="sidebar-button-container"
-                    ),
-                    ui.div(
-                        create_economic_indicators_ui(),
-                        class_="content-container"
-                    ),
-                    class_="page-with-sidebar"
-                )
+                create_economic_indicators_ui()
             ),
             
             ui.nav_panel(
                 "Data Explorer",
-                ui.div(
-                    ui.div(
-                        ui.input_action_button(
-                            "sidebar_toggle4", 
-                            "☰", 
-                            class_="custom-sidebar-btn"
-                        ),
-                        class_="sidebar-button-container"
-                    ),
-                    ui.div(
-                        create_data_explorer_ui(),
-                        class_="content-container"
-                    ),
-                    class_="page-with-sidebar"
-                )
+                create_data_explorer_ui()
             ),
             id="main_tabs"
         ),
@@ -129,31 +83,7 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         # Sidebar toggle functionality
         @reactive.effect
-        @reactive.event(input.sidebar_toggle1)
-        def toggle_sidebar():
-            session.send_custom_message(
-                "toggle_sidebar", 
-                {"target": "custom_sidebar"}
-            )
-
-        @reactive.effect
-        @reactive.event(input.sidebar_toggle2)
-        def toggle_sidebar():
-            session.send_custom_message(
-                "toggle_sidebar", 
-                {"target": "custom_sidebar"}
-            )
-
-        @reactive.effect
-        @reactive.event(input.sidebar_toggle3)
-        def toggle_sidebar():
-            session.send_custom_message(
-                "toggle_sidebar", 
-                {"target": "custom_sidebar"}
-            )
-
-        @reactive.effect
-        @reactive.event(input.sidebar_toggle4)
+        @reactive.event(input.sidebar_toggle)
         def toggle_sidebar():
             session.send_custom_message(
                 "toggle_sidebar", 
