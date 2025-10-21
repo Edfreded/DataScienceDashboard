@@ -275,6 +275,106 @@ body::before {
 }
 
 
+/* CUSTOM HEADER & SIDEBAR */
+
+/* Header row layout */
+.header-row {
+    display: flex;
+    align-items: center;
+    height: var(--layer-height);
+    padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+/* Sidebar button container */
+.sidebar-button-container {
+    flex-shrink: 0;
+}
+
+/* Custom sidebar toggle button */
+.custom-sidebar-btn {
+    height: calc(var(--layer-height) - var(--spacing-md)) !important;
+    width: calc(var(--layer-height) - var(--spacing-md)) !important;
+    min-width: unset !important;
+    padding: 0 !important;
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color)) !important;
+    border: 2px solid var(--accent-color) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-family) !important;
+    font-size: var(--font-size-lg) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 16px var(--shadow-color) !important;
+    transition: all var(--transition-normal) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Custom sidebar button hover */
+.custom-sidebar-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px var(--shadow-hover) !important;
+    border-color: var(--border-hover) !important;
+    background: linear-gradient(145deg, var(--accent-color), var(--primary-color)) !important;
+}
+
+/* Navbar container */
+.navbar-container {
+    flex: 1;
+    height: 100%;
+}
+
+/* Navbar adjustments for custom layout */
+.navbar-container .nav-tabs {
+    height: 100% !important;
+    margin-left: 0 !important;
+    border-bottom: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Custom sidebar content */
+.custom-sidebar-content {
+    position: fixed;
+    top: calc(var(--layer-height) + var(--spacing-sm));
+    left: var(--spacing-md);
+    width: 300px;
+    max-height: calc(100vh - var(--layer-height) - var(--spacing-lg));
+    z-index: 1040;
+    background: linear-gradient(145deg, var(--background-primary), var(--background-secondary));
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px var(--shadow-color);
+    padding: var(--spacing-md);
+    overflow-y: auto;
+    color: var(--text-primary);
+    font-family: var(--font-family);
+}
+
+/* Sidebar form controls styling */
+.custom-sidebar-content .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.custom-sidebar-content .form-control,
+.custom-sidebar-content .selectize-input {
+    background: var(--background-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+.custom-sidebar-content .form-control:focus,
+.custom-sidebar-content .selectize-input.focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 8px var(--shadow-color) !important;
+}
+
+.custom-sidebar-content .checkbox input[type="checkbox"] {
+    accent-color: var(--primary-color);
+}
+
 /* PLOTLY & Shiny */
 
 /* Shiny widget sizing */
