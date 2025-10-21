@@ -14,82 +14,125 @@ def create_dashboard_ui(css_file=None):
     css_to_use = css_file or 'css/default_theme.css'
     head_elements.append(ui.tags.link(rel="stylesheet", href=css_to_use))
     
-    return ui.page_fluid(
-        ui.tags.head(
-            *head_elements,
-            ui.tags.script("""
-                Shiny.addCustomMessageHandler('toggle_sidebar', function(message) {
-                    const sidebar = document.getElementById(message.target);
-                    if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-                        sidebar.style.display = 'block';
-                    } else {
-                        sidebar.style.display = 'none';
-                    }
-                });
-            """)
-        ),
-        
-        # Single sidebar button positioned outside navset_tab
-        ui.div(
-            ui.input_action_button(
-                "sidebar_toggle", 
-                "☰", 
-                class_="custom-sidebar-btn"
-            ),
-            class_="floating-sidebar-btn"
-        ),
-        
-        # Navbar with content panels
-        ui.navset_tab(
-            ui.nav_panel(
-                "Overview",
-                create_overview_ui()
-            ),
+    return ui.page_sidebar(
+        ui.sidebar(
+            ui.h4("Dashboard Controls", style="color: var(--text-accent); margin-bottom: 1rem; text-align: center;"),
+            ui.hr(style="border-color: var(--border-color); margin: 1rem 0;"),
             
-            ui.nav_panel(
-                "GDP Analysis", 
-                create_gdp_analysis_ui()
-            ),
-            
-            ui.nav_panel(
-                "Economic Indicators",
-                create_economic_indicators_ui()
-            ),
-            
-            ui.nav_panel(
-                "Data Explorer",
-                create_data_explorer_ui()
-            ),
-            id="main_tabs"
-        ),
-        
-        # Collapsible sidebar content
-        ui.div(
+            # Theme Selection
             ui.div(
-                ui.h4("Navigation", style="color: var(--text-accent); margin-bottom: 1rem;"),
-                ui.hr(style="border-color: var(--border-color);"),
-                ui.p("Dashboard Controls", style="color: var(--text-secondary); font-size: 0.9rem;"),
-                ui.input_selectize("theme_selector", "Theme:", choices=["retro", "dark", "light"]),
+                ui.h6("Appearance", style="color: var(--text-secondary); margin-bottom: 0.5rem;"),
+                ui.input_selectize(
+                    "theme_selector", 
+                    "Theme:", 
+                    choices={
+                        "retro": "Retro",
+                        "dark": "Dark", 
+                        "light": "Light",
+                        "dark_blue": "Dark Blue"
+                    },
+                    selected="retro"
+                ),
                 ui.input_checkbox("show_grid", "Show Grid Lines", value=True),
-                # Add more sidebar content here
+                style="margin-bottom: 1.5rem;"
             ),
-            id="custom_sidebar",
-            class_="custom-sidebar-content",
-            style="display: none;"
+            
+            # Data Filters
+            ui.div(
+                ui.h6("Data Filters", style="color: var(--text-secondary); margin-bottom: 0.5rem;"),
+                ui.input_slider(
+                    "year_range", 
+                    "Year Range:", 
+                    min=1950, 
+                    max=2019, 
+                    value=[2000, 2019],
+                    step=1
+                ),
+                ui.input_selectize(
+                    "region_filter",
+                    "Region:",
+                    choices={
+                        "all": "All Regions",
+                        "europe": "Europe",
+                        "asia": "Asia", 
+                        "americas": "Americas",
+                        "africa": "Africa",
+                        "oceania": "Oceania"
+                    },
+                    selected="all"
+                ),
+                style="margin-bottom: 1.5rem;"
+            ),
+            
+            # Quick Stats
+            ui.div(
+                ui.h6("Quick Info", style="color: var(--text-secondary); margin-bottom: 0.5rem;"),
+                ui.p("Use the controls above to customize your dashboard view.", 
+                     style="color: var(--text-primary); font-size: 0.85rem; line-height: 1.4;"),
+                ui.p("Switch between tabs to explore different economic indicators.", 
+                     style="color: var(--text-primary); font-size: 0.85rem; line-height: 1.4;"),
+            ),
+            bg="transparent",
+            open="closed",
+            width="300px"
+        ),
+        
+        # Main content with navbar and panels
+        ui.div(
+            ui.tags.head(*head_elements),
+            ui.navset_tab(
+                ui.nav_panel(
+                    "Overview",
+                    create_overview_ui()
+                ),
+                
+                ui.nav_panel(
+                    "GDP Analysis", 
+                    create_gdp_analysis_ui()
+                ),
+                
+                ui.nav_panel(
+                    "Economic Indicators",
+                    create_economic_indicators_ui()
+                ),
+                
+                ui.nav_panel(
+                    "Data Explorer",
+                    create_data_explorer_ui()
+                ),
+                id="main_tabs"
+            )
         )
     )
 
 def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
-        # Sidebar toggle functionality
+        # Sidebar controls - reactive effects for future functionality
         @reactive.effect
-        @reactive.event(input.sidebar_toggle)
-        def toggle_sidebar():
-            session.send_custom_message(
-                "toggle_sidebar", 
-                {"target": "custom_sidebar"}
-            )
+        @reactive.event(input.theme_selector)
+        def update_theme():
+            # Theme switching logic can be added here later
+            print(f"Theme changed to: {input.theme_selector()}")
         
+        @reactive.effect
+        @reactive.event(input.show_grid)
+        def toggle_grid():
+            # Grid visibility logic can be added here later
+            print(f"Grid visibility: {input.show_grid()}")
+        
+        @reactive.effect
+        @reactive.event(input.year_range)
+        def update_year_range():
+            # Year range filtering logic can be added here later
+            print(f"Year range changed to: {input.year_range()}")
+        
+        @reactive.effect
+        @reactive.event(input.region_filter)
+        def update_region():
+            # Region filtering logic can be added here later
+            print(f"Region filter changed to: {input.region_filter()}")
+        
+        # Pass original data to dashboard servers
         create_overview_server(cleaned_data, summary_stats)(input, output, session)
         create_gdp_analysis_server(cleaned_data, summary_stats)(input, output, session)
         create_economic_indicators_server(cleaned_data, summary_stats)(input, output, session)
