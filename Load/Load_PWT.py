@@ -29,42 +29,84 @@ def create_dashboard_ui(css_file=None):
             """)
         ),
         
-        # Custom header row with sidebar button and navbar
-        ui.div(
-            ui.div(
-                ui.input_action_button(
-                    "sidebar_toggle", 
-                    "☰", 
-                    class_="custom-sidebar-btn"
-                ),
-                class_="sidebar-button-container"
+        # Navbar only in header row
+        ui.navset_tab(
+            ui.nav_panel(
+                "Overview",
+                ui.div(
+                    ui.div(
+                        ui.input_action_button(
+                            "sidebar_toggle1", 
+                            "☰", 
+                            class_="custom-sidebar-btn"
+                        ),
+                        class_="sidebar-button-container"
+                    ),
+                    ui.div(
+                        create_overview_ui(),
+                        class_="content-container"
+                    ),
+                    class_="page-with-sidebar"
+                )
             ),
-            ui.div(
-                ui.navset_tab(
-                    ui.nav_panel(
-                        "Overview",
-                        create_overview_ui()
+            
+            ui.nav_panel(
+                "GDP Analysis",
+                ui.div(
+                    ui.div(
+                        ui.input_action_button(
+                            "sidebar_toggle2", 
+                            "☰", 
+                            class_="custom-sidebar-btn"
+                        ),
+                        class_="sidebar-button-container"
                     ),
-                    
-                    ui.nav_panel(
-                        "GDP Analysis", 
-                        create_gdp_analysis_ui()
+                    ui.div(
+                        create_gdp_analysis_ui(),
+                        class_="content-container"
                     ),
-                    
-                    ui.nav_panel(
-                        "Economic Indicators",
-                        create_economic_indicators_ui()
-                    ),
-                    
-                    ui.nav_panel(
-                        "Data Explorer",
-                        create_data_explorer_ui()
-                    ),
-                    id="main_tabs"
-                ),
-                class_="navbar-container"
+                    class_="page-with-sidebar"
+                )
             ),
-            class_="header-row"
+            
+            ui.nav_panel(
+                "Economic Indicators",
+                ui.div(
+                    ui.div(
+                        ui.input_action_button(
+                            "sidebar_toggle3", 
+                            "☰", 
+                            class_="custom-sidebar-btn"
+                        ),
+                        class_="sidebar-button-container"
+                    ),
+                    ui.div(
+                        create_economic_indicators_ui(),
+                        class_="content-container"
+                    ),
+                    class_="page-with-sidebar"
+                )
+            ),
+            
+            ui.nav_panel(
+                "Data Explorer",
+                ui.div(
+                    ui.div(
+                        ui.input_action_button(
+                            "sidebar_toggle4", 
+                            "☰", 
+                            class_="custom-sidebar-btn"
+                        ),
+                        class_="sidebar-button-container"
+                    ),
+                    ui.div(
+                        create_data_explorer_ui(),
+                        class_="content-container"
+                    ),
+                    class_="page-with-sidebar"
+                )
+            ),
+            id="main_tabs"
         ),
         
         # Collapsible sidebar content
@@ -87,7 +129,31 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         # Sidebar toggle functionality
         @reactive.effect
-        @reactive.event(input.sidebar_toggle)
+        @reactive.event(input.sidebar_toggle1)
+        def toggle_sidebar():
+            session.send_custom_message(
+                "toggle_sidebar", 
+                {"target": "custom_sidebar"}
+            )
+
+        @reactive.effect
+        @reactive.event(input.sidebar_toggle2)
+        def toggle_sidebar():
+            session.send_custom_message(
+                "toggle_sidebar", 
+                {"target": "custom_sidebar"}
+            )
+
+        @reactive.effect
+        @reactive.event(input.sidebar_toggle3)
+        def toggle_sidebar():
+            session.send_custom_message(
+                "toggle_sidebar", 
+                {"target": "custom_sidebar"}
+            )
+
+        @reactive.effect
+        @reactive.event(input.sidebar_toggle4)
         def toggle_sidebar():
             session.send_custom_message(
                 "toggle_sidebar", 

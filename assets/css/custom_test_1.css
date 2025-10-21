@@ -275,20 +275,22 @@ body::before {
 }
 
 
-/* CUSTOM HEADER & SIDEBAR */
+/* CUSTOM SIDEBAR */
 
-/* Header row layout */
-.header-row {
+/* Page layout with sidebar button */
+.page-with-sidebar {
     display: flex;
-    align-items: center;
-    height: var(--layer-height);
-    padding: var(--spacing-sm) var(--spacing-md);
     gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    height: calc(100vh - var(--layer-height));
 }
 
 /* Sidebar button container */
 .sidebar-button-container {
     flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    padding-top: var(--spacing-sm);
 }
 
 /* Custom sidebar toggle button */
@@ -319,28 +321,19 @@ body::before {
     background: linear-gradient(145deg, var(--accent-color), var(--primary-color)) !important;
 }
 
-/* Navbar container */
-.navbar-container {
+/* Content container */
+.content-container {
     flex: 1;
     height: 100%;
-}
-
-/* Navbar adjustments for custom layout */
-.navbar-container .nav-tabs {
-    height: 100% !important;
-    margin-left: 0 !important;
-    border-bottom: none !important;
-    align-items: center !important;
-    justify-content: center !important;
 }
 
 /* Custom sidebar content */
 .custom-sidebar-content {
     position: fixed;
-    top: calc(var(--layer-height) + var(--spacing-sm));
-    left: var(--spacing-md);
+    top: calc(var(--layer-height) + var(--spacing-lg));
+    left: calc(var(--spacing-md) + var(--layer-height));
     width: 300px;
-    max-height: calc(100vh - var(--layer-height) - var(--spacing-lg));
+    max-height: calc(100vh - var(--layer-height) - var(--spacing-xl));
     z-index: 1040;
     background: linear-gradient(145deg, var(--background-primary), var(--background-secondary));
     border: 2px solid var(--border-color);
