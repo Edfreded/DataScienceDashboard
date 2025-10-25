@@ -5,6 +5,9 @@ from Load.UI.Sidebars.Sidebar_PWT import create_sidebar
 
 from Load.Server.Server_PWT import create_dashboard_server as create_overview_server
 from Load.Server.Server_PWT_Filters import create_filters_server
+from Load.Server.Server_PWT_GDP import create_gdp_analysis_server
+from Load.Server.Server_PWT_Explorer import create_data_explorer_server
+
 
 def create_dashboard_ui(css_file=None):
     head_elements = []
@@ -35,5 +38,7 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         
         # Pass filtered data to dashboard servers
         create_overview_server(filtered_data, filtered_summary_stats)(input, output, session)
+        create_gdp_analysis_server(filtered_data, filtered_summary_stats)(input, output, session)
+        create_data_explorer_server(filtered_data, filtered_summary_stats)(input, output, session)
     
     return server

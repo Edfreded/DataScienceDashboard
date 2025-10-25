@@ -5,7 +5,7 @@ from Transform.Transform_PWT import clean_and_transform_data, create_summary_sta
 from Load.Load_PWT_Example import create_dashboard_ui, create_dashboard_server
 
 
-def orchestrator_PWT(css_file=None):
+def Orchestrator_PWT_Example(css_file=None):
 
     print("Extracting PWT Dataset...")
     raw_data = extract_PWT()

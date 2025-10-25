@@ -21,7 +21,8 @@ def setup_plotly_colors(theme_name=None):
     colors = get_theme_colors(theme_name)
     
     # Set dark template for better contrast with your themes
-    pio.templates.default = "plotly_dark"
+    # pio.templates.default = "plotly_dark"
+    pio.templates.default = "plotly_white"
     
     # Apply the theme colors to the dark template
     pio.templates["plotly_dark"].layout.colorway = colors
