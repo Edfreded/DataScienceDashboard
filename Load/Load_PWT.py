@@ -1,15 +1,9 @@
 from shiny import ui, reactive
-from Load.UI.Layouts.Layout_PWT_Overview import create_dashboard_ui as create_overview_ui
-from Load.UI.Layouts.Layout_PWT_GDP import create_gdp_analysis_ui
-from Load.UI.Layouts.Layout_PWT_Economic import create_economic_indicators_ui
-from Load.UI.Layouts.Layout_PWT_Explorer import create_data_explorer_ui
+from Load.UI.Layouts.Layout_PWT import create_dashboard_ui as create_overview_ui
 
 from Load.UI.Sidebars.Sidebar_PWT import create_sidebar
 
-from Load.Server.Server_PWT_Overview import create_dashboard_server as create_overview_server
-from Load.Server.Server_PWT_GDP import create_gdp_analysis_server
-from Load.Server.Server_PWT_Economic import create_economic_indicators_server
-from Load.Server.Server_PWT_Explorer import create_data_explorer_server
+from Load.Server.Server_PWT import create_dashboard_server as create_overview_server
 from Load.Server.Server_PWT_Filters import create_filters_server
 
 def create_dashboard_ui(css_file=None):
@@ -27,21 +21,6 @@ def create_dashboard_ui(css_file=None):
                     "Overview",
                     create_overview_ui()
                 ),
-                
-                ui.nav_panel(
-                    "GDP Analysis", 
-                    create_gdp_analysis_ui()
-                ),
-                
-                ui.nav_panel(
-                    "Economic Indicators",
-                    create_economic_indicators_ui()
-                ),
-                
-                ui.nav_panel(
-                    "Data Explorer",
-                    create_data_explorer_ui()
-                ),
                 id="main_tabs"
             )
         )
@@ -56,8 +35,5 @@ def create_dashboard_server(cleaned_data=None, summary_stats=None):
         
         # Pass filtered data to dashboard servers
         create_overview_server(filtered_data, filtered_summary_stats)(input, output, session)
-        create_gdp_analysis_server(filtered_data, filtered_summary_stats)(input, output, session)
-        create_economic_indicators_server(filtered_data, filtered_summary_stats)(input, output, session)
-        create_data_explorer_server(filtered_data, filtered_summary_stats)(input, output, session)
     
     return server

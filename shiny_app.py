@@ -5,7 +5,7 @@ from assets.theme_utils import get_theme_css_file, setup_plotly_colors
 
 def create_app():
     # Change this line to switch themes: 'retro', 'light', 'default', 'dark_blue', 'dark', 'test1'
-    theme_name = 'test1'
+    theme_name = 'default'
     
     # Get theme CSS file and set up Plotly colors
     css_file = get_theme_css_file(theme_name)
