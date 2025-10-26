@@ -69,182 +69,119 @@ def create_dashboard_server(filtered_data):
                 ui.div("Richest Country", class_="card-label")
             )
 
-        # World Map - GDP per Capita
-        @output
-        @render_widget
-        def output_world_gdp_map():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['gdp_pc'])
-            
-            fig = px.choropleth(
-                latest_data,
-                locations="countrycode",
-                color="gdp_pc",
-                hover_name="country",
-                hover_data={'gdp_pc': ':,.0f', 'year': True},
-                color_continuous_scale="Viridis",
-                title=f"GDP per Capita by Country ({latest_year})",
-                labels={'gdp_pc': 'GDP per Capita ($)'}
-            )
-            
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
-        
-        # GDP Growth Rate Map
-        @output
-        @render_widget
-        def output_world_growth_map():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            growth_data = data[data['year'] == latest_year].dropna(subset=['gdp_pc_growth'])
-            
-            fig = px.choropleth(
-                growth_data,
-                locations="countrycode",
-                color="gdp_pc_growth",
-                hover_name="country",
-                hover_data={'gdp_pc_growth': ':.2f', 'year': True},
-                color_continuous_scale="RdYlGn",
-                color_continuous_midpoint=0,
-                title=f"GDP Growth Rate by Country ({latest_year})",
-                labels={'gdp_pc_growth': 'GDP Growth (%)'}
-            )
-            
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
 
-        # Top Countries by GDP per Capita
+
+        # Time Trends - Levels (from imputation notebook)
         @output
         @render_widget
-        def output_top_countries_chart():
+        def output_levels_trend():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['gdp_pc'])
-            top_10 = latest_data.nlargest(10, 'gdp_pc')
+            # Key economic variables to show levels over time (matching notebook)
+            vars_to_show = ['emp', 'hc', 'rkna', 'rnna', 'labsh']
+            var_labels = {
+                'emp': 'Employment',
+                'hc': 'Human Capital', 
+                'rkna': 'Real Capital Stock',
+                'rnna': 'Net Capital Stock',
+                'labsh': 'Labor Share'
+            }
             
-            fig = px.bar(
-                top_10,
-                x='gdp_pc',
-                y='country',
-                orientation='h',
-                title="Top 10 Countries by GDP per Capita",
-                labels={'gdp_pc': 'GDP per Capita ($)', 'country': 'Country'}
-            )
+            fig = go.Figure()
             
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(l=100, r=50, t=60, b=50),
-                autosize=True,
-                yaxis={'categoryorder': 'total ascending'}
-            )
-            
-            return fig
-        
-        # GDP Trend Over Time
-        @output
-        @render_widget
-        def output_gdp_trend_chart():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            yearly_avg = data.groupby('year')['gdp_pc'].mean().reset_index()
-            
-            fig = px.line(
-                yearly_avg,
-                x='year',
-                y='gdp_pc',
-                title="Global Average GDP per Capita Over Time",
-                labels={'year': 'Year', 'gdp_pc': 'GDP per Capita ($)'},
-                markers=True
-            )
+            for var in vars_to_show:
+                if var in data.columns:
+                    yearly_avg = data.groupby('year')[var].mean().reset_index()
+                    
+                    fig.add_trace(go.Scatter(
+                        x=yearly_avg['year'],
+                        y=yearly_avg[var],
+                        mode='lines+markers',
+                        name=var_labels.get(var, var),
+                        line=dict(width=2),
+                        marker=dict(size=4)
+                    ))
             
             fig.update_layout(
+                title="Global Mean Levels Over Time (Post-Imputation)",
+                xaxis_title="Year",
+                yaxis_title="Mean Value",
                 hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
+                autosize=True,
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
             )
             
             return fig
 
-        # GDP vs Population Scatter
+        # Time Trends - Growth Rates (from imputation notebook)
         @output
         @render_widget
-        def output_gdp_population_scatter():
+        def output_growth_rates_trend():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['gdp_pc', 'pop'])
+            # Calculate growth rates for key variables (matching notebook)
+            vars_to_show = ['emp', 'hc', 'rkna', 'rnna', 'labsh']
+            var_labels = {
+                'emp': 'Employment Growth',
+                'hc': 'Human Capital Growth', 
+                'rkna': 'Real Capital Stock Growth',
+                'rnna': 'Net Capital Stock Growth',
+                'labsh': 'Labor Share Growth'
+            }
             
-            fig = px.scatter(
-                latest_data,
-                x='pop',
-                y='gdp_pc',
-                hover_name='country',
-                title=f"GDP per Capita vs Population ({latest_year})",
-                labels={'pop': 'Population (millions)', 'gdp_pc': 'GDP per Capita ($)'},
-                log_x=True,
-                log_y=True
-            )
+            data_copy = data.copy()
             
-            fig.update_layout(
-                margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
-            )
+            # Calculate growth rates
+            for var in vars_to_show:
+                if var in data_copy.columns:
+                    data_copy[f'{var}_growth'] = data_copy.groupby('countrycode')[var].pct_change() * 100
             
-            return fig
-
-        # Trade Openness vs GDP
-        @output
-        @render_widget
-        def output_trade_gdp_scatter():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
+            fig = go.Figure()
             
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['trade_open', 'gdp_pc'])
+            for var in vars_to_show:
+                growth_var = f'{var}_growth'
+                if growth_var in data_copy.columns:
+                    yearly_avg = data_copy.groupby('year')[growth_var].mean().reset_index()
+                    
+                    fig.add_trace(go.Scatter(
+                        x=yearly_avg['year'],
+                        y=yearly_avg[growth_var],
+                        mode='lines+markers',
+                        name=var_labels.get(var, var),
+                        line=dict(width=2),
+                        marker=dict(size=4)
+                    ))
             
-            fig = px.scatter(
-                latest_data,
-                x='trade_open',
-                y='gdp_pc',
-                hover_name='country',
-                title=f"Trade Openness vs GDP per Capita ({latest_year})",
-                labels={'trade_open': 'Trade Openness (%)', 'gdp_pc': 'GDP per Capita ($)'}
-            )
+            # Add zero line
+            fig.add_hline(y=0, line_dash="dash", line_color="black", line_width=1)
             
             fig.update_layout(
+                title="Average Annual Growth Rates Over Time",
+                xaxis_title="Year",
+                yaxis_title="Mean Growth Rate (%)",
+                hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
+                autosize=True,
+                legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=1.02,
+                    xanchor="right",
+                    x=1
+                )
             )
             
             return fig

@@ -7,14 +7,10 @@ from Load.UI.Components.Containers.Containers_test import DashboardContainers
 def create_dashboard_ui():
     return ui.div(
         DashboardRows.row_6(
-            DashboardCards.card_map("capital_world_capital_map"),
-            DashboardCards.card_map("capital_investment_rate_map"),
-            DashboardCards.card_graph("capital_intensity_scatter")
+            DashboardCards.card_graph("capital_output_ratio_chart"),
         ),
         DashboardRows.row_6(
-            DashboardCards.card_graph("capital_investment_trend_chart"),
-            DashboardCards.card_graph("capital_growth_chart"),
-            DashboardCards.card_graph("capital_investment_efficiency_chart")
+            DashboardCards.card_graph("capital_net_investment_chart"),
         ),
         class_="dashboard-container"
     )

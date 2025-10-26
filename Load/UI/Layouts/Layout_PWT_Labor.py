@@ -7,14 +7,12 @@ from Load.UI.Components.Containers.Containers_test import DashboardContainers
 def create_dashboard_ui():
     return ui.div(
         DashboardRows.row_6(
-            DashboardCards.card_map("labor_world_hc_map"),
-            DashboardCards.card_map("labor_employment_rate_map"),
-            DashboardCards.card_graph("labor_hc_gdp_scatter")
+            DashboardCards.card_graph("labor_hc_returns_chart"),
+            DashboardCards.card_graph("labor_share_decline"),
         ),
         DashboardRows.row_6(
-            DashboardCards.card_graph("labor_hc_trend_chart"),
-            DashboardCards.card_graph("labor_share_trend"),
-            DashboardCards.card_graph("labor_dependency_ratio_chart")
+            DashboardCards.card_graph("labor_emp_hc_correlation"),
+            DashboardCards.card_graph("labor_effective_productivity"),
         ),
         class_="dashboard-container"
     )

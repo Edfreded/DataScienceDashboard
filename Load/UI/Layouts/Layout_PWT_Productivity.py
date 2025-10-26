@@ -7,14 +7,11 @@ from Load.UI.Components.Containers.Containers_test import DashboardContainers
 def create_dashboard_ui():
     return ui.div(
         DashboardRows.row_6(
-            DashboardCards.card_map("productivity_world_tfp_map"),
-            DashboardCards.card_graph("productivity_tfp_growth_map"),
-            DashboardCards.card_graph("productivity_tfp_gdp_scatter")
+            DashboardCards.card_graph("productivity_tfp_acceleration"),
+            DashboardCards.card_graph("productivity_technology_gap"),
         ),
         DashboardRows.row_6(
-            DashboardCards.card_graph("productivity_tfp_trend_chart"),
-            DashboardCards.card_graph("productivity_tfp_relative_us"),
-            DashboardCards.card_graph("productivity_hc_tfp_interaction")
+            DashboardCards.card_graph("productivity_decomposition"),
         ),
         class_="dashboard-container"
     )

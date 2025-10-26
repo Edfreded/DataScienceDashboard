@@ -7,14 +7,10 @@ from Load.UI.Components.Containers.Containers_test import DashboardContainers
 def create_dashboard_ui():
     return ui.div(
         DashboardRows.row_6(
-            DashboardCards.card_map("output_world_gdp_map"),
-            DashboardCards.card_map("output_world_growth_map"),
-            DashboardCards.card_graph("output_top_countries_chart")
+            DashboardCards.card_graph("output_levels_trend"),
         ),
         DashboardRows.row_6(
-            DashboardCards.card_graph("output_gdp_trend_chart"),
-            DashboardCards.card_graph("output_gdp_population_scatter"),
-            DashboardCards.card_graph("output_trade_gdp_scatter")
+            DashboardCards.card_graph("output_growth_rates_trend"),
         ),
         class_="dashboard-container"
     )

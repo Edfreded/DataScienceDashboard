@@ -72,116 +72,79 @@ def create_dashboard_server(filtered_data):
                 ui.div("Highest K/Worker", class_="card-label")
             )
 
-        # World Map - Capital per Worker
-        @output
-        @render_widget
-        def capital_world_capital_map():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['k_per_worker'])
-            
-            fig = px.choropleth(
-                latest_data,
-                locations="countrycode",
-                color="k_per_worker",
-                hover_name="country",
-                hover_data={'k_per_worker': ':,.0f', 'year': True},
-                color_continuous_scale="Viridis",
-                title=f"Capital per Worker by Country ({latest_year})",
-                labels={'k_per_worker': 'Capital per Worker ($)'}
-            )
-            
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
-        
-        # Investment Rate Map
-        @output
-        @render_widget
-        def capital_investment_rate_map():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            investment_data = data[data['year'] == latest_year].dropna(subset=['csh_i'])
-            investment_data = investment_data.copy()
-            investment_data['investment_rate'] = investment_data['csh_i'] * 100
-            
-            fig = px.choropleth(
-                investment_data,
-                locations="countrycode",
-                color="investment_rate",
-                hover_name="country",
-                hover_data={'investment_rate': ':.1f', 'year': True},
-                color_continuous_scale="Blues",
-                title=f"Investment Rate by Country ({latest_year})",
-                labels={'investment_rate': 'Investment Rate (%)'}
-            )
-            
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
 
-        # Capital Intensity vs GDP
+
+        # Capital-Output Ratio Analysis
         @output
         @render_widget
-        def capital_intensity_scatter():
+        def capital_output_ratio_chart():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['capital_intensity', 'gdp_pc'])
+            # Calculate capital-output ratio (K/Y)
+            data_copy = data.copy()
+            data_copy['ky_ratio'] = data_copy['rnna'] / data_copy['rgdpo']
             
-            fig = px.scatter(
-                latest_data,
-                x='capital_intensity',
-                y='gdp_pc',
-                hover_name='country',
-                title=f"Capital Intensity vs GDP per Capita ({latest_year})",
-                labels={'capital_intensity': 'Capital Intensity (K/Y)', 'gdp_pc': 'GDP per Capita ($)'}
+            latest_year = data_copy['year'].max()
+            latest_data = data_copy[data_copy['year'] == latest_year].dropna(subset=['ky_ratio'])
+            
+            # Filter reasonable values
+            latest_data = latest_data[(latest_data['ky_ratio'] > 0.5) & (latest_data['ky_ratio'] < 10)]
+            top_15 = latest_data.nlargest(15, 'ky_ratio')
+            
+            fig = px.bar(
+                top_15,
+                x='ky_ratio',
+                y='country',
+                orientation='h',
+                title=f"Capital-Output Ratios by Country ({latest_year})",
+                labels={'ky_ratio': 'Capital-Output Ratio (K/Y)', 'country': 'Country'}
             )
             
             fig.update_layout(
-                margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
+                showlegend=False,
+                margin=dict(l=120, r=50, t=60, b=50),
+                autosize=True,
+                yaxis={'categoryorder': 'total ascending'}
             )
             
             return fig
         
-        # Investment Rate Trend
+
+
+
+
+        # Net Investment Analysis
         @output
         @render_widget
-        def capital_investment_trend_chart():
+        def capital_net_investment_chart():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            yearly_avg = data.groupby('year')['csh_i'].mean().reset_index()
-            yearly_avg['investment_rate'] = yearly_avg['csh_i'] * 100
+            # Calculate net investment if not available
+            if 'net_investment' not in data.columns:
+                data_copy = data.copy()
+                if 'delta' in data.columns:
+                    data_copy['net_investment'] = data_copy['csh_i'] - data_copy['delta']
+                else:
+                    data_copy['net_investment'] = data_copy['csh_i']  # Assume no depreciation
+            else:
+                data_copy = data.copy()
+            
+            # Time trend of net investment
+            yearly_avg = data_copy.groupby('year')['net_investment'].mean().reset_index()
+            yearly_avg['net_investment_pct'] = yearly_avg['net_investment'] * 100
             
             fig = px.line(
                 yearly_avg,
                 x='year',
-                y='investment_rate',
-                title="Global Average Investment Rate Over Time",
-                labels={'year': 'Year', 'investment_rate': 'Investment Rate (%)'},
+                y='net_investment_pct',
+                title="Global Average Net Investment Rate Over Time",
+                labels={'year': 'Year', 'net_investment_pct': 'Net Investment Rate (%)'},
                 markers=True
             )
             
@@ -189,73 +152,6 @@ def create_dashboard_server(filtered_data):
                 hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
                 autosize=True
-            )
-            
-            return fig
-
-        # Capital per Worker Growth
-        @output
-        @render_widget
-        def capital_growth_chart():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['k_per_worker_growth'])
-            top_10 = latest_data.nlargest(10, 'k_per_worker_growth')
-            
-            fig = px.bar(
-                top_10,
-                x='k_per_worker_growth',
-                y='country',
-                orientation='h',
-                title=f"Top 10 Countries by Capital per Worker Growth ({latest_year})",
-                labels={'k_per_worker_growth': 'K/Worker Growth (%)', 'country': 'Country'}
-            )
-            
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(l=100, r=50, t=60, b=50),
-                autosize=True,
-                yaxis={'categoryorder': 'total ascending'}
-            )
-            
-            return fig
-
-        # Investment Efficiency
-        @output
-        @render_widget
-        def capital_investment_efficiency_chart():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['investment_efficiency'])
-            # Filter out extreme outliers
-            latest_data = latest_data[
-                (latest_data['investment_efficiency'] > 0) & 
-                (latest_data['investment_efficiency'] < latest_data['investment_efficiency'].quantile(0.95))
-            ]
-            top_10 = latest_data.nlargest(10, 'investment_efficiency')
-            
-            fig = px.bar(
-                top_10,
-                x='investment_efficiency',
-                y='country',
-                orientation='h',
-                title=f"Top 10 Countries by Investment Efficiency ({latest_year})",
-                labels={'investment_efficiency': 'Investment Efficiency (TFP/Investment)', 'country': 'Country'}
-            )
-            
-            fig.update_layout(
-                showlegend=False,
-                margin=dict(l=100, r=50, t=60, b=50),
-                autosize=True,
-                yaxis={'categoryorder': 'total ascending'}
             )
             
             return fig

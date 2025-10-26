@@ -32,7 +32,7 @@ def create_sidebar():
                         "Year Range:", 
                         min=1950, 
                         max=2019, 
-                        value=[2000, 2019],
+                        value=[1950, 2019],
                         step=1
                     ),
                     ui.input_selectize(

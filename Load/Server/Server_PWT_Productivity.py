@@ -72,10 +72,55 @@ def create_dashboard_server(filtered_data):
                 ui.div("Highest TFP", class_="card-label")
             )
 
-        # World Map - Total Factor Productivity
+
+
+        # TFP Growth Acceleration Analysis
         @output
         @render_widget
-        def productivity_world_tfp_map():
+        def productivity_tfp_acceleration():
+            data = get_data()
+            if data is None or len(data) == 0:
+                fig = go.Figure().add_annotation(text="No data available")
+                return fig
+            
+            latest_year = data['year'].max()
+            latest_data = data[data['year'] == latest_year].dropna(subset=['tfp_growth_accel'])
+            
+            # Filter reasonable values
+            latest_data = latest_data[
+                (latest_data['tfp_growth_accel'] > -10) & 
+                (latest_data['tfp_growth_accel'] < 10)
+            ]
+            
+            # Show both positive and negative acceleration
+            top_positive = latest_data.nlargest(8, 'tfp_growth_accel')
+            top_negative = latest_data.nsmallest(7, 'tfp_growth_accel')
+            combined = pd.concat([top_negative, top_positive])
+            
+            fig = px.bar(
+                combined,
+                x='tfp_growth_accel',
+                y='country',
+                orientation='h',
+                title=f"TFP Growth Acceleration by Country ({latest_year})",
+                labels={'tfp_growth_accel': 'TFP Growth Acceleration (pp)', 'country': 'Country'},
+                color='tfp_growth_accel',
+                color_continuous_scale='RdYlGn'
+            )
+            
+            fig.update_layout(
+                showlegend=False,
+                margin=dict(l=120, r=50, t=60, b=50),
+                autosize=True,
+                yaxis={'categoryorder': 'total ascending'}
+            )
+            
+            return fig
+
+        # Technology Gap Analysis (TFP relative to frontier)
+        @output
+        @render_widget
+        def productivity_technology_gap():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
@@ -84,166 +129,87 @@ def create_dashboard_server(filtered_data):
             latest_year = data['year'].max()
             latest_data = data[data['year'] == latest_year].dropna(subset=['rtfpna'])
             
-            fig = px.choropleth(
-                latest_data,
-                locations="countrycode",
-                color="rtfpna",
-                hover_name="country",
-                hover_data={'rtfpna': ':.3f', 'year': True},
-                color_continuous_scale="Viridis",
-                title=f"Total Factor Productivity by Country ({latest_year})",
-                labels={'rtfpna': 'TFP Index'}
-            )
+            # Calculate TFP relative to frontier (max TFP)
+            tfp_frontier = latest_data['rtfpna'].max()
+            latest_data = latest_data.copy()
+            latest_data['tfp_gap'] = (tfp_frontier - latest_data['rtfpna']) / tfp_frontier * 100
             
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
-        
-        # TFP Growth Rate Map
-        @output
-        @render_widget
-        def productivity_tfp_growth_map():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            growth_data = data[data['year'] == latest_year].dropna(subset=['rtfpna_growth'])
-            
-            fig = px.choropleth(
-                growth_data,
-                locations="countrycode",
-                color="rtfpna_growth",
-                hover_name="country",
-                hover_data={'rtfpna_growth': ':.2f', 'year': True},
-                color_continuous_scale="RdYlGn",
-                color_continuous_midpoint=0,
-                title=f"TFP Growth Rate by Country ({latest_year})",
-                labels={'rtfpna_growth': 'TFP Growth (%)'}
-            )
-            
-            fig.update_layout(
-                geo=dict(showframe=False, showcoastlines=True, projection_type='natural earth'),
-                margin=dict(l=0, r=0, t=50, b=0),
-                autosize=True
-            )
-            
-            return fig
-
-        # TFP vs GDP per Worker
-        @output
-        @render_widget
-        def productivity_tfp_gdp_scatter():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['rtfpna', 'gdp_pw'])
-            
-            fig = px.scatter(
-                latest_data,
-                x='rtfpna',
-                y='gdp_pw',
-                hover_name='country',
-                title=f"TFP vs GDP per Worker ({latest_year})",
-                labels={'rtfpna': 'Total Factor Productivity', 'gdp_pw': 'GDP per Worker ($)'}
-            )
-            
-            fig.update_layout(
-                margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
-            )
-            
-            return fig
-        
-        # TFP Trend Over Time
-        @output
-        @render_widget
-        def productivity_tfp_trend_chart():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            yearly_avg = data.groupby('year')['rtfpna'].mean().reset_index()
-            
-            fig = px.line(
-                yearly_avg,
-                x='year',
-                y='rtfpna',
-                title="Global Average Total Factor Productivity Over Time",
-                labels={'year': 'Year', 'rtfpna': 'TFP Index'},
-                markers=True
-            )
-            
-            fig.update_layout(
-                hovermode='x unified',
-                margin=dict(l=50, r=50, t=60, b=50),
-                autosize=True
-            )
-            
-            return fig
-
-        # TFP Relative to US
-        @output
-        @render_widget
-        def productivity_tfp_relative_us():
-            data = get_data()
-            if data is None or len(data) == 0:
-                fig = go.Figure().add_annotation(text="No data available")
-                return fig
-            
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['tfp_rel_us'])
-            top_10 = latest_data.nlargest(10, 'tfp_rel_us')
+            # Show countries with largest technology gaps
+            largest_gaps = latest_data.nlargest(15, 'tfp_gap')
             
             fig = px.bar(
-                top_10,
-                x='tfp_rel_us',
+                largest_gaps,
+                x='tfp_gap',
                 y='country',
                 orientation='h',
-                title=f"TFP Relative to US ({latest_year})",
-                labels={'tfp_rel_us': 'TFP Relative to US', 'country': 'Country'}
+                title=f"Technology Gap: Distance from TFP Frontier ({latest_year})",
+                labels={'tfp_gap': 'Technology Gap (%)', 'country': 'Country'}
             )
             
             fig.update_layout(
                 showlegend=False,
-                margin=dict(l=100, r=50, t=60, b=50),
+                margin=dict(l=120, r=50, t=60, b=50),
                 autosize=True,
                 yaxis={'categoryorder': 'total ascending'}
             )
             
             return fig
 
-        # Human Capital x TFP Interaction
+
+
+        # Productivity Decomposition Over Time
         @output
         @render_widget
-        def productivity_hc_tfp_interaction():
+        def productivity_decomposition():
             data = get_data()
             if data is None or len(data) == 0:
                 fig = go.Figure().add_annotation(text="No data available")
                 return fig
             
-            latest_year = data['year'].max()
-            latest_data = data[data['year'] == latest_year].dropna(subset=['hc_x_tfp', 'gdp_pc'])
+            # Calculate global averages for productivity components
+            yearly_stats = data.groupby('year').agg({
+                'rtfpna': 'mean',
+                'hc': 'mean',
+                'k_per_worker': 'mean'
+            }).reset_index()
             
-            fig = px.scatter(
-                latest_data,
-                x='hc_x_tfp',
-                y='gdp_pc',
-                hover_name='country',
-                title=f"Human Capital × TFP vs GDP per Capita ({latest_year})",
-                labels={'hc_x_tfp': 'Human Capital × TFP', 'gdp_pc': 'GDP per Capita ($)'}
-            )
+            # Normalize to base year (first year = 100)
+            base_year = yearly_stats['year'].min()
+            for col in ['rtfpna', 'hc', 'k_per_worker']:
+                base_value = yearly_stats[yearly_stats['year'] == base_year][col].iloc[0]
+                yearly_stats[f'{col}_index'] = (yearly_stats[col] / base_value) * 100
+            
+            fig = go.Figure()
+            
+            fig.add_trace(go.Scatter(
+                x=yearly_stats['year'],
+                y=yearly_stats['rtfpna_index'],
+                mode='lines+markers',
+                name='Total Factor Productivity',
+                line=dict(color='red', width=3)
+            ))
+            
+            fig.add_trace(go.Scatter(
+                x=yearly_stats['year'],
+                y=yearly_stats['hc_index'],
+                mode='lines+markers',
+                name='Human Capital',
+                line=dict(color='blue', width=2)
+            ))
+            
+            fig.add_trace(go.Scatter(
+                x=yearly_stats['year'],
+                y=yearly_stats['k_per_worker_index'],
+                mode='lines+markers',
+                name='Capital per Worker',
+                line=dict(color='green', width=2)
+            ))
             
             fig.update_layout(
+                title="Global Productivity Components Over Time (Index, Base Year = 100)",
+                xaxis_title="Year",
+                yaxis_title="Index (Base Year = 100)",
+                hovermode='x unified',
                 margin=dict(l=50, r=50, t=60, b=50),
                 autosize=True
             )
