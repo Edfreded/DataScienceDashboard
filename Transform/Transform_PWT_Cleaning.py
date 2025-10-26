@@ -54,39 +54,6 @@ def pwt_clean(df):
     df = df.drop(columns=['i_cig', 'i_xm', 'i_xr', 'i_outlier', 'i_irr'])
 
 
-    # Data Quality Validation
 
-    # === VALUE SANITY CHECKS ===
-    invalid_pop = df.loc[df['pop'] <= 0, ['countrycode', 'year', 'pop']]
-    invalid_emp = df.loc[df['emp'] < 0, ['countrycode', 'year', 'emp']]
-    invalid_gdp = df.loc[df['rgdpo'] < 0, ['countrycode', 'year', 'rgdpo']]
-
-
-    # === CROSS-VARIABLE CONSISTENCY ===
-    inconsistent_emp = df.loc[df['emp'] > df['pop'], ['countrycode', 'year', 'emp', 'pop']]
-
-    # === NUMERIC OUTLIER SCAN (|z| > 5) ===
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    z_scores = np.abs((df[numeric_cols] - df[numeric_cols].mean()) / df[numeric_cols].std())
-    outlier_counts = (z_scores > 5).sum().sort_values(ascending=False)
-
-
-    # === MISSING DATA SUMMARY ===
-    missing_summary = df.isna().mean().sort_values(ascending=False)
-
-
-    # === TIME COVERAGE (first 5 countries) ===
-    coverage = (
-        df.groupby('countrycode', observed=True)['year']
-        .agg(['min', 'max', 'count'])
-        .sort_values('count', ascending=False)
-    )
-
-
-    # === SUMMARY STATS (key columns) ===
-    key_cols = ['rgdpo', 'pop', 'emp', 'labsh', 'irr']
-    for col in key_cols:
-        if col in df.columns:
-            desc = df[col].describe(percentiles=[.01, .5, .99])
 
     return df
