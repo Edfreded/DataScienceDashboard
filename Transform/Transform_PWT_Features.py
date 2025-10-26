@@ -31,10 +31,10 @@ def pwt_feature(df):
     # Time based
     df = df.sort_values(["countrycode", "year"])
 
-    df["gdp_pc_lag1"] = df.groupby("countrycode")["gdp_pc"].shift(1)
+    df["gdp_pc_lag1"] = df.groupby("countrycode", observed=True)["gdp_pc"].shift(1)
 
     for var in ["gdp_pc", "pop", "hc", "rtfpna", "csh_i"]:
-        df[f"{var}_growth"] = df.groupby("countrycode")[var].pct_change() * 100
+        df[f"{var}_growth"] = df.groupby("countrycode", observed=True)[var].pct_change(fill_method=None) * 100
 
     # Only calculate rolling averages for countries with sufficient data
     def safe_rolling_mean(group):
@@ -44,7 +44,7 @@ def pwt_feature(df):
             return pd.Series(dtype=float, index=group.index)
     
     df["gdp_pc_growth_5yr"] = (
-        df.groupby("countrycode")["gdp_pc_growth"]
+        df.groupby("countrycode", observed=True)["gdp_pc_growth"]
         .apply(safe_rolling_mean)
         .reset_index(level=0, drop=True)
     )
@@ -53,7 +53,7 @@ def pwt_feature(df):
     df["log_gdp_pc"] = np.log(df["gdp_pc"])
     df["log_gdp_pc_lag1"] = np.log(df["gdp_pc_lag1"])
 
-    df["gdp_pc_rel_world"] = df["gdp_pc"] / df.groupby("year")["gdp_pc"].transform("mean")
+    df["gdp_pc_rel_world"] = df["gdp_pc"] / df.groupby("year", observed=True)["gdp_pc"].transform("mean")
 
     df["era_globalization"] = (df["year"] >= 1990).astype(int)
 
@@ -69,13 +69,13 @@ def pwt_feature(df):
         df["net_investment"] = df["csh_i"]  # Assume no depreciation if delta missing
     df["capital_intensity"] = df["rkna"] / df["rgdpo"]
 
-    df["k_per_worker_growth"] = df.groupby("countrycode")["k_per_worker"].pct_change() * 100
+    df["k_per_worker_growth"] = df.groupby("countrycode", observed=True)["k_per_worker"].pct_change(fill_method=None) * 100
 
     df["investment_efficiency"] = df["rtfpna"] / df["csh_i"]
         
 
     # Labor Market Dynamics
-    df["labsh_growth"] = df.groupby("countrycode")["labsh"].pct_change() * 100
+    df["labsh_growth"] = df.groupby("countrycode", observed=True)["labsh"].pct_change(fill_method=None) * 100
 
     df["hc_returns"] = (df["gdp_per_eff_worker"] - df["gdp_pw"]) / df["gdp_pw"]
 
@@ -93,7 +93,7 @@ def pwt_feature(df):
         
 
     # Convergence Analysis
-    frontier_gdp = df.groupby("year")["gdp_pc"].transform("max")
+    frontier_gdp = df.groupby("year", observed=True)["gdp_pc"].transform("max")
     df["dist_from_frontier"] = frontier_gdp - df["gdp_pc"]
 
     df["catchup_speed"] = (df["gdp_pc"] - df["gdp_pc_lag1"]) / (frontier_gdp - df["gdp_pc_lag1"])
@@ -114,7 +114,7 @@ def pwt_feature(df):
     else:
         df["welfare_tfp"] = np.nan
 
-    df["tfp_growth_accel"] = df.groupby("countrycode")["rtfpna_growth"].diff()
+    df["tfp_growth_accel"] = df.groupby("countrycode", observed=True)["rtfpna_growth"].diff()
         
 
     # Volatility and Crisis Indicators
@@ -125,13 +125,13 @@ def pwt_feature(df):
             return pd.Series(dtype=float, index=group.index)
     
     df["growth_volatility"] = (
-        df.groupby("countrycode")["gdp_pc_growth"]
+        df.groupby("countrycode", observed=True)["gdp_pc_growth"]
         .apply(safe_rolling_std)
         .reset_index(level=0, drop=True)
     )
 
     df["recession_dummy"] = (df["gdp_pc_growth"] < 0).astype(int)
-    df["recession_count"] = df.groupby("countrycode")["recession_dummy"].cumsum()
+    df["recession_count"] = df.groupby("countrycode", observed=True)["recession_dummy"].cumsum()
 
     df["crisis_dummy"] = (df["gdp_pc_growth"] < -3).astype(int)
      

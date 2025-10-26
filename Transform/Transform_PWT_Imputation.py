@@ -5,7 +5,7 @@ import warnings
 
 def pwt_impute(df):
     # Create proxy for rkna based on rnna (scaled within country)
-    df['rkna_proxy'] = df.groupby('countrycode')['rnna'].transform(
+    df['rkna_proxy'] = df.groupby('countrycode', observed=True)['rnna'].transform(
         lambda x: x / x.max() if pd.notna(x.max()) and x.max() != 0 else np.nan
     )
 
@@ -17,7 +17,7 @@ def pwt_impute(df):
 
     # For countries still fully missing, use year-based global mean
     if df['hc'].isna().any():
-        global_mean = df.groupby('year')['hc'].transform(lambda x: x.mean(skipna=True))
+        global_mean = df.groupby('year', observed=True)['hc'].transform(lambda x: x.mean(skipna=True))
         mask = df['hc'].isna()
         df.loc[mask, 'hc'] = global_mean[mask]
         df.loc[mask, 'i_hc'] = 5
@@ -46,7 +46,7 @@ def pwt_impute(df):
     vars_to_check = ['emp', 'hc', 'rkna', 'rnna', 'labsh']
 
     for var in vars_to_check:
-        full_missing = df.groupby('countrycode')[var].apply(lambda x: x.isna().all())
+        full_missing = df.groupby('countrycode', observed=True)[var].apply(lambda x: x.isna().all())
         drop_countries = full_missing[full_missing].index.tolist()
         
         if drop_countries:
@@ -61,7 +61,7 @@ def pwt_impute(df):
 
     # Calculate share of implausible observations per country
     implausible_share = (
-        df.groupby('countrycode')
+        df.groupby('countrycode', observed=True)
         .apply(lambda g: (
             (g['labsh'] < 0.05) | (g['labsh'] > 1) | 
             (g['ky_ratio'] < 0.3) | (g['ky_ratio'] > 20)
@@ -124,8 +124,8 @@ def impute_rtfpna(df, group_col='countrycode'):
     tmp['A_raw'] = A_raw
     global_growth = (
         tmp.sort_values('year')
-           .groupby('year')['A_raw']
-           .apply(lambda s: np.nan if s.isna().all() else s.pct_change().median(skipna=True))
+           .groupby('year', observed=True)['A_raw']
+           .apply(lambda s: np.nan if s.isna().all() else s.pct_change(fill_method=None).median(skipna=True))
            .fillna(0.0)  # if a year has no info, assume 0 growth
     )
 
@@ -260,7 +260,7 @@ def impute_rtfpna(df, group_col='countrycode'):
         g['rtfpna'] = out_series
         return g
 
-    out = out.groupby(group_col, group_keys=False).apply(process_country)
+    out = out.groupby(group_col, group_keys=False, observed=True).apply(process_country)
     return out
 
 
@@ -327,7 +327,7 @@ def impute_timeseries(df, var, group_col='countrycode', proxy_var=None, use_prox
         if x.isna().sum() > 0:
             valid = x.dropna()
             if len(valid) >= 2:
-                avg_growth = valid.pct_change().mean()
+                avg_growth = valid.pct_change(fill_method=None).mean()
                 first_valid = x.first_valid_index()
                 last_valid = x.last_valid_index()
 
@@ -364,8 +364,8 @@ def impute_timeseries(df, var, group_col='countrycode', proxy_var=None, use_prox
         g[var] = x
         return g
 
-    # Apply imputation per group (FutureWarning suppressed at notebook level)
-    df = df.groupby(group_col, group_keys=False).apply(_impute_group)
+    # Apply imputation per group
+    df = df.groupby(group_col, group_keys=False, observed=True).apply(_impute_group)
 
     # (5) Proxy-based substitution for entirely missing series
     if use_proxy and proxy_var is not None and proxy_var in df.columns:
@@ -377,7 +377,7 @@ def impute_timeseries(df, var, group_col='countrycode', proxy_var=None, use_prox
         if pd.notna(median_ratio) and median_ratio > 0:
             # Identify countries with no valid data
             missing_countries = (
-                df.groupby(group_col)[var]
+                df.groupby(group_col, observed=True)[var]
                 .apply(lambda x: x.notna().sum() == 0)
             )
             missing_countries = missing_countries[missing_countries].index.tolist()
