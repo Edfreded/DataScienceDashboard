@@ -1,7 +1,9 @@
 from shiny import App
 from Config import ASSETS_PATH
 from Extract.Extract_PWT import extract_PWT
-from Transform.Transform_PWT import clean_and_transform_data, create_summary_stats
+from Transform.Transform_PWT_Cleaning import pwt_clean
+from Transform.Transform_PWT_Imputation import pwt_impute
+from Transform.Transform_PWT_Features import pwt_feature
 from Load.Load_PWT import create_dashboard_ui, create_dashboard_server
 
 
@@ -11,14 +13,15 @@ def orchestrator_PWT(css_file=None):
     raw_data = extract_PWT()
 
     print("Transforming PWT Dataset...")
-    cleaned_data = clean_and_transform_data(raw_data)
-    summary_stats = create_summary_stats(cleaned_data)
+    
+    cleaned_data = pwt_clean(raw_data)
+    imputed_data = pwt_impute(cleaned_data)
+    featured_data = pwt_feature(imputed_data)
 
     print("Starting PWT Dashboard...")
     app_ui = create_dashboard_ui(css_file=css_file)
     app_server = create_dashboard_server(
-        cleaned_data=cleaned_data, 
-        summary_stats=summary_stats
+        cleaned_data=featured_data, 
     )
 
     print("Dashboard ready! Starting server...")

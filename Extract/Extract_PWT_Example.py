@@ -1,11 +1,11 @@
 import pandas as pd
 import os
 
-def extract_PWT():
+def extract_PWT_Example():
     try:
-        dataset_path = os.path.join('Datasets', 'pwt110.xlsx')
+        dataset_path = os.path.join('Datasets', 'pwt110_cleaned.csv')
         
-        df = pd.read_excel(dataset_path, sheet_name='Data')
+        df = pd.read_csv(dataset_path)
         
         if 'Unnamed: 0' in df.columns:
             df = df.drop('Unnamed: 0', axis=1)

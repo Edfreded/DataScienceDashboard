@@ -10,7 +10,7 @@ from Load.Server.Server_PWT_Overview import create_dashboard_server as create_ov
 from Load.Server.Server_PWT_GDP import create_gdp_analysis_server
 from Load.Server.Server_PWT_Economic import create_economic_indicators_server
 from Load.Server.Server_PWT_Explorer import create_data_explorer_server
-from Load.Server.Server_PWT_Filters import create_filters_server
+from Load.Server.Server_PWT_Filters_Example import create_filters_server
 
 def create_dashboard_ui(css_file=None):
     head_elements = []

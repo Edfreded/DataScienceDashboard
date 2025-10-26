@@ -1,7 +1,7 @@
 from shiny import reactive
 import pandas as pd
 
-def create_filters_server(cleaned_data=None):
+def create_filters_server(cleaned_data=None, summary_stats=None):
     def server(input, output, session):
         
         # Reactive filtered data based on sidebar controls

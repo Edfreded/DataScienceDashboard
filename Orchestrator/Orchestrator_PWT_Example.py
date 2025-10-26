@@ -1,7 +1,7 @@
 from shiny import App
 from Config import ASSETS_PATH
-from Extract.Extract_PWT import extract_PWT
-from Transform.Transform_PWT import clean_and_transform_data, create_summary_stats
+from Extract.Extract_PWT_Example import extract_PWT_Example
+from Transform.Transform_PWT_Example import pwt_example_clean_and_transform_data, pwt_example_create_summary_stats
 from Load.Load_PWT_Example import create_dashboard_ui, create_dashboard_server
 
 
@@ -11,8 +11,8 @@ def Orchestrator_PWT_Example(css_file=None):
     raw_data = extract_PWT()
 
     print("Transforming PWT Dataset...")
-    cleaned_data = clean_and_transform_data(raw_data)
-    summary_stats = create_summary_stats(cleaned_data)
+    cleaned_data = pwt_example_clean_and_transform_data(raw_data)
+    summary_stats = pwt_example_create_summary_stats(cleaned_data)
 
     print("Starting PWT Dashboard...")
     app_ui = create_dashboard_ui(css_file=css_file)
